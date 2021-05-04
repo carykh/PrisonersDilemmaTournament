@@ -12,7 +12,7 @@ When you run code/prisonersDilemma.py, it will search through all .py strategy f
 If you'd like to add your own strategy, all you have to do is create a new .py file in the code/exampleStrats folder that follows the same format as the others. Then, when you run code/prisonersDilemma.py, it should automatically include your strategy into the tournament!
 
 Details:
-| First Header  | Player A cooperates | Player A defects |
+| Payout Chart  | Player A cooperates | Player A defects |
 | ------------- | ------------- | ------------- |
 | Player B cooperates  | A: +3, B: +3  | A: +5, B: +0  |
 | Player A cooperates  | A: +0, B: +5  | A: +1, B: +1  |
@@ -23,4 +23,4 @@ Each pairing simulation runs for this many turns:
 ```
 200-40*np.log(random.random())
 ```
-This means each game is guaranteed to be at least 200 turns long. But then, for every turn after the 200th, there is an equal probability that the game ends. The probability is very low, so there should be no strategizing to, say, defect on the very last turn consequence-free.
+This means each game is guaranteed to be at least 200 turns long. But then, for every turn after the 200th, there is an equal probability that the game ends. The probability is very low, so there should be no strategizing to defect on the very last turn consequence-free.
