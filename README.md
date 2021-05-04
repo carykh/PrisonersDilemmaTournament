@@ -7,7 +7,7 @@ Watch This Place's awesome video about iterated Prisoner's Dilemma for context! 
 Nicky Case's "The Evolution of Trust" is also super fascinating, but it's not necessary to understand this project: https://ncase.me/trust/
 
 How this works:
-When you run code/prisonersDilemma.py, it will search through all .py strategy files in code/exampleStrats. Then, it will simulate "Iterated Prisoner's Dilemma" with every possible pairing. (There are (n choose 2) pairings.) After all simulations are done, it will average each strategies' overall score. It will then produce a leaderboard of strategies based on their average performance, and save it to results.txt.
+When you run code/prisonersDilemma.py, it will search through all the Python strategy files in code/exampleStrats. Then, it will simulate "Iterated Prisoner's Dilemma" with every possible pairing. (There are (n choose 2) pairings.) After all simulations are done, it will average each strategies' overall score. It will then produce a leaderboard of strategies based on their average performance, and save it to results.txt.
 
 If you'd like to add your own strategy, all you have to do is create a new .py file in the code/exampleStrats folder that follows the same format as the others. Then, when you run code/prisonersDilemma.py, it should automatically include your strategy into the tournament!
 
