@@ -16,6 +16,6 @@ Details:
 
 Each pairing simulation runs for this many turns:
 ```
-200-40*np.log(random.random()).
+200-40*np.log(random.random())
 ```
 This means each game is guaranteed to be at least 200 turns long. But then, for every turn after the 200th, there is an equal probability that the game ends. The probability is very low, so there should be no strategizing to, say, defect on the very last turn consequence-free.
