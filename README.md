@@ -29,9 +29,9 @@ For example, it might have the values
 ```
 In this case, there have been 3 turns, we have defected twice then cooperated once, and our opponent has cooperated all three times.
 
-'memory' is a very free-form parameter that can take on any information you'd like a strategy to retain, turn-to-turn. Strategies that don't need memory, like Tit-for-tat, can simply return None for this variable. If you want to keep track of being 'wronged', like grudger.py, you can set memory to True or False. If you have an extremely complicated strategy, you can make 'memory' store a list of arbitrarily many varibles!
+'memory' is a very open-ended parameter that can takes on any information that should be retained, turn-to-turn. Strategies that don't need memory, like Tit-for-tat, can simply return None for this variable. If you want to keep track of being 'wronged', like grimTrigger.py, you can set memory to True or False. If you have an extremely complicated strategy, you have make 'memory' store a list of arbitrarily many varibles!
 
-When outputting, the first value is just the move the strategy chooses to make, with 0 being defect and 1 being cooperate. The second value is any memory you'd like to retain into the next iteration. This can be 'None'.
+For the outputs: the first value is just the move your strategy chooses to make, with 0 being defect and 1 being cooperate. The second value is any memory you'd like to retain into the next iteration. This can be 'None'.
 
 ---
 
