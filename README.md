@@ -3,6 +3,7 @@
 This is my CS 269i class project.
 
 Watch This Place's awesome video about iterated Prisoner's Dilemma for context! https://www.youtube.com/watch?v=BOvAbjfJ0x0
+
 Nicky Case's "The Evolution of Trust" is also a must-see: https://ncase.me/trust/
 
 How this works:
