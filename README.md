@@ -2,7 +2,11 @@
 
 This is my CS 269i class project.
 
-Watch This Place's awesome video about iterated Prisoner's Dilemma for context! https://www.youtube.com/watch?v=BOvAbjfJ0x0
+Watch This Place's awesome videos about iterated Prisoner's Dilemma for context!
+
+https://www.youtube.com/watch?v=t9Lo2fgxWHw
+
+https://www.youtube.com/watch?v=BOvAbjfJ0x0
 
 Nicky Case's "The Evolution of Trust" is also super fascinating, but it's not necessary to understand this project: https://ncase.me/trust/
 
