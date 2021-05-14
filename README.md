@@ -19,7 +19,7 @@ If you'd like to add your own strategy, all you have to do is create a new .py f
 | Payout Chart  | Player A cooperates | Player A defects |
 | ------------- | ------------- | ------------- |
 | Player B cooperates  | A: +3, B: +3  | A: +5, B: +0  |
-| Player A cooperates  | A: +0, B: +5  | A: +1, B: +1  |
+| Player B defects  | A: +0, B: +5  | A: +1, B: +1  |
 
 In this code, 0 = 'D' = defecting, and 1 = 'C' = cooperating.
 
