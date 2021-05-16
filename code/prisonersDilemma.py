@@ -15,7 +15,7 @@ moveLabels = ["D","C"]
 
 # Returns a 2-by-n numpy array. The first axis is which player (0 = us, 1 = opponent)
 # The second axis is which turn. (0 = first turn, 1 = next turn, etc.
-# For example, it might return
+# For example, it might have the values
 #
 # [[0 0 1]       a.k.a.    D D C
 #  [1 1 1]]      a.k.a.    C C C
@@ -27,6 +27,13 @@ def getVisibleHistory(history, player, turn):
     if player == 1:
         historySoFar = np.flip(historySoFar,0)
     return historySoFar
+
+def strategyMove(move):
+    if type(move) is str:
+        defects = ["defect","confess the crime"]
+        return 0 if (move in defects) else 1
+    else:
+        return move
 
 def runRound(pair):
     moduleA = importlib.import_module(STRATEGY_FOLDER+"."+pair[0])
@@ -40,8 +47,8 @@ def runRound(pair):
     for turn in range(LENGTH_OF_GAME):
         playerAmove, memoryA = moduleA.strategy(getVisibleHistory(history,0,turn),memoryA)
         playerBmove, memoryB = moduleB.strategy(getVisibleHistory(history,1,turn),memoryB)
-        history[0,turn] = playerAmove
-        history[1,turn] = playerBmove
+        history[0,turn] = strategyMove(playerAmove)
+        history[1,turn] = strategyMove(playerBmove)
         
     return history
     
