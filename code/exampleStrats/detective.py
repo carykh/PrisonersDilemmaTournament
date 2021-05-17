@@ -10,6 +10,8 @@ import numpy as np
 # If you never side with the law, I'll act like [alwaysSideWithLaw],
 # because I'd rather uphold order. Elementary, my dear Watson.
 
+# Reminder: For the history array, "side with law" = 0, "side with accomplice" = 1
+
 def strategy(history, memory):
     testingSchedule = ["side with accomplice","side with law","side with accomplice","side with accomplice"]
     gameLength = history.shape[1]
