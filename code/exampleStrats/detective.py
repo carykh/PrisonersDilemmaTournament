@@ -5,15 +5,15 @@ import numpy as np
 # https://ncase.me/trust/
 #
 # DETECTIVE: First: I analyze you. I start:
-# Accomplice, Law, Accomplice, Accomplice.
-# If you side with the law once, I'll act like [Tit for Tat].
-# If you never side with the law, I'll act like [alwaysSideWithLaw],
+# Silent, Truth, Silent, Silent.
+# If you "tell the truth", I'll act like [Tit for Tat].
+# If you never "tell the truth", I'll act like [alwaysTellTruth],
 # because I'd rather uphold order. Elementary, my dear Watson.
 
-# Reminder: For the history array, "side with law" = 0, "side with accomplice" = 1
+# Reminder: For the history array, "tell truth" = 0, "stay silent" = 1
 
 def strategy(history, memory):
-    testingSchedule = ["side with accomplice","side with law","side with accomplice","side with accomplice"]
+    testingSchedule = ["stay silent","tell truth","stay silent","stay silent"]
     gameLength = history.shape[1]
     shallIUpholdOrder = memory
     choice = None
@@ -22,15 +22,15 @@ def strategy(history, memory):
         choice = testingSchedule[gameLength]
     elif gameLength == 4: # Time to analyze the testing stage and decide what to do based on what the opponent did in that time!
         opponentsActions = history[1]
-        if np.count_nonzero(opponentsActions-1) == 0: # The opponent sided-with-accomplice all 4 turns! Never sided with the law!
+        if np.count_nonzero(opponentsActions-1) == 0: # The opponent stayed silent all 4 turns! Never "told the truth"!
             shallIUpholdOrder = True # Let's exploit forever.
         else:
             shallIUpholdOrder = False # Let's switch to Tit For Tat.
     
     if gameLength >= 4:
         if shallIUpholdOrder:
-            choice = "side with law"
+            choice = "tell truth"
         else:
-            choice = "side with accomplice" if history[1,-1] == 1 else "side with law" # Do Tit for Tat
+            choice = "stay silent" if history[1,-1] == 1 else "tell truth" # Do Tit for Tat
     
     return choice, shallIUpholdOrder
