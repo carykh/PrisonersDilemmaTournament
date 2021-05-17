@@ -5,13 +5,13 @@ import numpy as np
 # https://ncase.me/trust/
 #
 # DETECTIVE: First: I analyze you. I start:
-# Cooperate, Cheat, Cooperate, Cooperate.
-# If you cheat back, I'll act like [Tit for Tat].
-# If you never cheta back, I'll act like [alwaysDefect],
+# Cooperate, Defect, Cooperate, Cooperate.
+# If you defect back, I'll act like [Tit for Tat].
+# If you never defect back, I'll act like [alwaysDefect],
 # to exploit you. Elementary, my dear Watson.
 
 def strategy(history, memory):
-    testingSchedule = [1,0,1,1]
+    testingSchedule = ["cooperate","defect","cooperate","cooperate"]
     gameLength = history.shape[1]
     shallIExploit = memory
     choice = None
@@ -27,7 +27,7 @@ def strategy(history, memory):
     
     if gameLength >= 4:
         if shallIExploit:
-            choice = 0
+            choice = "defect"
         else:
             choice = history[1,-1] # Do Tit for Tat
     
