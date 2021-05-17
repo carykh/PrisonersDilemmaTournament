@@ -10,6 +10,8 @@ import numpy as np
 # If you never defect back, I'll act like [alwaysDefect],
 # to exploit you. Elementary, my dear Watson.
 
+# Reminder: For the history array, "cooperate" = 1, "defect" = 0
+
 def strategy(history, memory):
     testingSchedule = ["cooperate","defect","cooperate","cooperate"]
     gameLength = history.shape[1]
