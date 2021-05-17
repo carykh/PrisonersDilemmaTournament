@@ -1,7 +1,9 @@
+# Reminder: For the history array, "side with law" = 0, "side with accomplice" = 1
+
 # Forgiving Tit for Tat.
-# Choose to defect if and only if the opponent just defected TWICE in a row.
+# Choose to side with law if and only if the opponent just sided with the law TWICE in a row.
 def strategy(history, memory):
-    choice = 1
-    if history.shape[1] >= 2 and history[1,-1] == 0 and history[1,-2] == 0: # We check the TWO most recent turns to see if BOTH were defections, and only then do we defect too.
-        choice = 0
+    choice = "side with accomplice"
+    if history.shape[1] >= 2 and history[1,-1] == 0 and history[1,-2] == 0: # We check the TWO most recent turns to see if BOTH were law-sidings, and only then do we side with the law too.
+        choice = "side with law"
     return choice, None
