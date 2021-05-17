@@ -8,20 +8,21 @@ STRATEGY_FOLDER = "exampleStrats"
 RESULTS_FILE = "results.txt"
 
 pointsArray = [[1,5],[0,3]] # The i-j-th element of this array is how many points you receive if you do play i, and your opponent does play j.
-moveLabels = ["D","C"]
-# D = defect,     betray,       sabotage,  free-ride,     etc.
-# C = cooperate,  stay silent,  comply,    upload files,  etc.
+moveLabels = ["L","A"]
+# L = side with law
+# A = side with accomplice
 
 
 # Returns a 2-by-n numpy array. The first axis is which player (0 = us, 1 = opponent)
 # The second axis is which turn. (0 = first turn, 1 = next turn, etc.
 # For example, it might have the values
 #
-# [[0 0 1]       a.k.a.    D D C
-#  [1 1 1]]      a.k.a.    C C C
+# [[0 0 1]       a.k.a.    L L A
+#  [1 1 1]]      a.k.a.    A A A
 #
-# if there have been 3 turns, and we have defected twice then cooperated once,
-# and our opponent has cooperated all three times.
+# if there have been 3 turns, and we have "sided with law" twice then "sided with accomplice" once,
+# and our opponent has "sided with accomplice" all three times.
+
 def getVisibleHistory(history, player, turn):
     historySoFar = history[:,:turn].copy()
     if player == 1:
