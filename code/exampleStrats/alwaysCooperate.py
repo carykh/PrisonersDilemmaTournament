@@ -1,2 +1,2 @@
 def strategy(history, memory):
-	return 1, None
+	return "cooperate", None
