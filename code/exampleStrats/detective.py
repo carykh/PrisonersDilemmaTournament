@@ -15,7 +15,7 @@ import numpy as np
 def strategy(history, memory):
     testingSchedule = ["side with accomplice","side with law","side with accomplice","side with accomplice"]
     gameLength = history.shape[1]
-    shallIExploit = memory
+    shallIUpholdOrder = memory
     choice = None
     
     if gameLength < 4: # We're still in that initial testing stage.
