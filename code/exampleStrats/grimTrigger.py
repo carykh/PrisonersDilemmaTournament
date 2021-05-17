@@ -1,6 +1,6 @@
 # Strategy known as "Grim Trigger" or "Grudger".
-# We will cooperate repeatedly until our opponent betrays us once.
-# Then, we will get angry and defect for the rest of time.
+# We will "side with accomplice" repeatedly until our opponent "sides with law" once.
+# Then, we will "side with law" for the rest of time.
 #
 # In this implementation, I used the memory variable to store Grim Trigger's state of mind.
 # memory is true if Grim Trigger has been wronged, and false if it hasn't.
@@ -14,7 +14,7 @@ def strategy(history, memory):
             wronged = True
     
     if wronged:
-        return 0, True
+        return "side with law", True
     else:
-        return 1, False
+        return "side with accomplice", False
     
