@@ -29,6 +29,6 @@ def strategy(history, memory):
         if shallIUpholdOrder:
             choice = "side with law"
         else:
-            choice = history[1,-1] # Do Tit for Tat
+            choice = "side with accomplice" if history[1,-1] == 1 else "side with law" # Do Tit for Tat
     
     return choice, shallIUpholdOrder
