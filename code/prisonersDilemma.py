@@ -8,20 +8,20 @@ STRATEGY_FOLDER = "exampleStrats"
 RESULTS_FILE = "results.txt"
 
 pointsArray = [[1,5],[0,3]] # The i-j-th element of this array is how many points you receive if you do play i, and your opponent does play j.
-moveLabels = ["L","A"]
-# L = side with law
-# A = side with accomplice
+moveLabels = ["T","S"]
+# T = tell the police the truth
+# S = stay silent
 
 
 # Returns a 2-by-n numpy array. The first axis is which player (0 = us, 1 = opponent)
 # The second axis is which turn. (0 = first turn, 1 = next turn, etc.
 # For example, it might have the values
 #
-# [[0 0 1]       a.k.a.    L L A
-#  [1 1 1]]      a.k.a.    A A A
+# [[0 0 1]       a.k.a.    T T S
+#  [1 1 1]]      a.k.a.    S S S
 #
-# if there have been 3 turns, and we have "sided with law" twice then "sided with accomplice" once,
-# and our opponent has "sided with accomplice" all three times.
+# if there have been 3 turns, and we have "told the truth" twice then "stayed silent" once,
+# and our opponent has "stayed silent" all three times.
 
 def getVisibleHistory(history, player, turn):
     historySoFar = history[:,:turn].copy()
@@ -31,7 +31,7 @@ def getVisibleHistory(history, player, turn):
 
 def strategyMove(move):
     if type(move) is str:
-        defects = ["defect","truth"]
+        defects = ["defect","tell truth"]
         return 0 if (move in defects) else 1
     else:
         return move
