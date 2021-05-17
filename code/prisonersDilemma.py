@@ -30,7 +30,7 @@ def getVisibleHistory(history, player, turn):
 
 def strategyMove(move):
     if type(move) is str:
-        defects = ["defect","confess the crime"]
+        defects = ["defect","side with law"]
         return 0 if (move in defects) else 1
     else:
         return move
