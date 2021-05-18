@@ -1,8 +1,8 @@
 # PrisonersDilemmaTournament
 
-This is my CS 269i class project.
+This is my CS 269i class project. Check out my webpage for context! https://htwins.net/prisoners-dilemma/
 
-Watch This Place's awesome videos about iterated Prisoner's Dilemma for context!
+Watch This Place's awesome videos about iterated Prisoner's Dilemma for more context!
 
 https://www.youtube.com/watch?v=t9Lo2fgxWHw
 
