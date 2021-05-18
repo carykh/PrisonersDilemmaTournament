@@ -44,3 +44,7 @@ Each pairing simulation runs for this many turns:
 200-40*np.log(random.random())
 ```
 This means each game is guaranteed to be at least 200 turns long. But then, for every turn after the 200th, there is an equal probability that the game ends. The probability is very low, so there should be no strategizing to defect on the very last turn consequence-free.
+
+---
+
+Please submit your strategies to this Google Form: https://forms.gle/wWwZY9mmSHF2X34P7 by May 26th, 2021 at 10 PM UTC. Your file can be named whatever you want your strategy to be called, like "superCleverDetective.py", but you must keep it a .py file. Also, do not rename the function header within the file - you must keep it as "def strategy(history, memory):". When I’ve got all your strategies collected in one place, I will combine them with that list of 9 example strategies already provided in the GitHub repo. With these (9 + n) strategies all appearing once in this giant "mosh pit", I will run the program "prisonersDilemma.py". Whoever’s single strategy takes the top spot will win $1,000!  Second place will win $300, and third place will win $100. (Note: There is a small chance one of the 9 default strategies win, but I hope that doesn't happen!)
