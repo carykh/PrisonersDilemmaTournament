@@ -44,3 +44,30 @@ Each pairing simulation runs for this many turns:
 200-40*np.log(random.random())
 ```
 This means each game is guaranteed to be at least 200 turns long. But then, for every turn after the 200th, there is an equal probability that the game ends. The probability is very low, so there should be no strategizing to defect on the very last turn consequence-free.
+
+
+# Running
+## System
+Python >= 3.6
+
+
+CAUTION:
+
+Installing any python library on your system interpret is not advised. It is recommended to use a virtual environment
+like `venv`.
+
+* Ensure you have all the python libraries listed in requirements.txt installed. `pip install -r requirements.txt`
+* Navigate to `./code`
+* Run `python prisonersDilemma.py`
+
+## Docker
+* Have Docker installed
+* If you are on a Linux machine or mac run `./run.sh`
+* If you are on Windows run
+```
+docker build -t "prisoners_dilemma_tournament" .
+docker run -v %cd%:/opt -it "prisoners_dilemma_tournament"
+```
+    * NOTE the "." at the end of the docker build line. You must include this!
+
+
