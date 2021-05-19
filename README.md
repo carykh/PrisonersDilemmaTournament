@@ -69,5 +69,6 @@ docker build -t "prisoners_dilemma_tournament" .
 docker run -v %cd%:/opt -it "prisoners_dilemma_tournament"
 ```
     * NOTE the "." at the end of the docker build line. You must include this!
+    * NOTE: This has not been tested on a Windows machine as I do not have one.
 
 
