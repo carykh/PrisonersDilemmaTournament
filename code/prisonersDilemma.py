@@ -14,7 +14,7 @@ parser.add_argument('-n', '--num-runs', dest='num_runs', type=int,
 
 args = parser.parse_args()
 
-STRATEGY_FOLDERS = ["exampleStrats", "myStrats"]
+STRATEGY_FOLDERS = ["exampleStrats", "valadaptive"]
 RESULTS_FILE = "results.txt"
 SUMMARY_FILE = "summary.txt"
 NUM_RUNS = args.num_runs
