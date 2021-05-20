@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-let view = ['edward'];
+let view = ['nice'];
 
 fs.readFile('./results.txt', 'utf8', (err, data) => {
   if (err) throw err;

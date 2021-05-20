@@ -29,7 +29,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo", "edward", "etc"]
+STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo", "edward", "misc", "etc"]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
 RESULTS_FILE = "results.txt"
