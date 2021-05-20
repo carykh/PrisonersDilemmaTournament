@@ -172,7 +172,6 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     rankings = np.argsort(scoresNumpy)
 
     mainFile.write("\n\nTOTAL SCORES\n")
-    averageScoreData = []  # for average-of-N calculations
     for rank in range(len(STRATEGY_LIST)):
         i = rankings[-1 - rank]
         score = scoresNumpy[i]
@@ -188,7 +187,6 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
         )
         mainFile.write(scoreLine)
         summaryFile.write(scoreLine)
-        averageScoreData.append((STRATEGY_LIST[i], scorePer))
 
     mainFile.flush()
     mainFile.close()
