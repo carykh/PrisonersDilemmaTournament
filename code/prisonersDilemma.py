@@ -5,6 +5,7 @@ import os
 import random
 
 import numpy as np
+from decimal import Decimal  # precise fixed-point arithmetic
 
 STRATEGY_FOLDER = "exampleStrats"
 RESULTS_FILE = "results.txt"
@@ -76,7 +77,7 @@ def tallyRoundScores(history):
         playerBmove = history[1, turn]
         scoreA += pointsArray[playerAmove][playerBmove]
         scoreB += pointsArray[playerBmove][playerAmove]
-    return scoreA / ROUND_LENGTH, scoreB / ROUND_LENGTH
+    return Decimal(scoreA) / ROUND_LENGTH, Decimal(scoreB) / ROUND_LENGTH
 
 
 def outputRoundResults(f, pair, roundHistory, scoresA, scoresB):
