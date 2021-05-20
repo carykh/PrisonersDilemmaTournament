@@ -19,19 +19,27 @@ jobs:
       - run: mkdir etc
       - run: python prisonersDilemma.py
       - id: summary
-        run: |
+        run: '
         output="$(cat summary.txt)"
-        output="${output//'%'/'%25'}"
-        output="${output//$'\n'/'%0A'}"
-        output="${output//$'\r'/'%0D'}"
-        echo "::set-output name=file::$output"
+        
+        output="${output//''%''/''%25''}"
+        
+        output="${output//$''\n''/''%0A''}"
+        
+        output="${output//$''\r''/''%0D''}"
+        
+        echo "::set-output name=file::$output"'
       - id: results
-        run: |
+        run: '
         output="$(cat results.txt)"
-        output="${output//'%'/'%25'}"
-        output="${output//$'\n'/'%0A'}"
-        output="${output//$'\r'/'%0D'}"
-        echo "::set-output name=file::$output"
+        
+        output="${output//''%''/''%25''}"
+        
+        output="${output//$''\n''/''%0A''}"
+        
+        output="${output//$''\r''/''%0D''}"
+        
+        echo "::set-output name=file::$output"'
   publish:
     runs-on: ubuntu-latest
     needs: run
