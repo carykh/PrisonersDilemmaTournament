@@ -111,7 +111,7 @@
                 }
 
                 render () {
-                    const filteredResults = this.state.enableViewStrategy && strategies.indexOf(this.state.viewedStrategy) !== -1 ?
+                    const filteredResults = this.state.enableViewStrategy && strategies.some(strategy => strategy.name === this.state.viewedStrategy) ?
                         results.filter(result => result.nameA === this.state.viewedStrategy || result.nameB === this.state.viewedStrategy) :
                         results;
                     return html`
