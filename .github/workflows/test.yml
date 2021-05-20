@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       summary: ${{ steps.summary.outputs.file }}
-      result: ${{ steps.result.outputs.file }}
+      results: ${{ steps.results.outputs.file }}
     defaults:
       run:
         working-directory: ./code
@@ -27,7 +27,7 @@ jobs:
             echo "::set-output name=file::$output"
       - id: results
         run: |
-            output="$(cat results.txt)"
+            output="$(cat results.html)"
             output="${output//'%'/'%25'}"
             output="${output//$'\n'/'%0A'}"
             output="${output//$'\r'/'%0D'}"
@@ -41,3 +41,15 @@ jobs:
         uses: Ilshidur/action-discord@master
         with:
             args: ${{ needs.run.outputs.summary }}
+      - run: |
+            mkdir public
+            cat <<ENDOFFILE > public/index.html
+            ${{ needs.run.outputs.results }}
+            ENDOFFILE
+      - name: Deploy to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: public
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
