@@ -20,7 +20,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-STRATEGY_FOLDERS = ["exampleStrats", "valadaptiveStrats", "nekiwoStrats", "generalStrats"]
+STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo"]
 RESULTS_FILE = "results.txt"
 SUMMARY_FILE = "summary.txt"
 NUM_RUNS = args.num_runs
