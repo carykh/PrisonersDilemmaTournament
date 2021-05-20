@@ -1,11 +1,14 @@
-import os
-import itertools
+import csv
 import importlib
-import numpy as np
+import itertools
+import os
 import random
+
+import numpy as np
 
 STRATEGY_FOLDER = "exampleStrats"
 RESULTS_FILE = "results.txt"
+H2H_FILE = "headToHead.csv"
 
 pointsArray = [
     [1, 5],
@@ -95,9 +98,16 @@ def pad(stri, leng):
     return result
 
 
+def insertIntoNestedDict(nestedDict, keyA, keyB, value):
+    if keyA not in nestedDict:
+        nestedDict[keyA] = dict()
+    nestedDict[keyA][keyB] = value
+
+
 def runFullPairingTournament(inFolder, outFile):
     print("Starting tournament, reading files from " + inFolder)
     scoreKeeper = {}
+    headToHead = {}
     STRATEGY_LIST = []
     for file in os.listdir(inFolder):
         if file.endswith(".py"):
@@ -113,6 +123,8 @@ def runFullPairingTournament(inFolder, outFile):
         outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
         scoreKeeper[pair[0]] += scoresA
         scoreKeeper[pair[1]] += scoresB
+        insertIntoNestedDict(headToHead, pair[0], pair[1], scoresA)
+        insertIntoNestedDict(headToHead, pair[1], pair[0], scoresB)
 
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):
@@ -136,7 +148,24 @@ def runFullPairingTournament(inFolder, outFile):
 
     f.flush()
     f.close()
-    print("Done with everything! Results file written to " + RESULTS_FILE)
+    print("Done with results tallying! Results file written to " + RESULTS_FILE)
+
+    with open(H2H_FILE, "w", newline="") as csvfile:
+        h2hwriter = csv.writer(csvfile)  # defaults to Excel dialect
+        h2hwriter.writerow(
+            [
+                "",
+            ]
+            + STRATEGY_LIST
+        )  # column header
+        for strategy in STRATEGY_LIST:
+            row = [
+                strategy,
+            ]
+            for otherStrategy in STRATEGY_LIST:
+                row.append(str(headToHead.get(strategy, dict()).get(otherStrategy, "")))
+            h2hwriter.writerow(row)
+    print("Done with head-to-head results-tracking! CSV written to " + H2H_FILE)
 
 
 runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
