@@ -126,9 +126,11 @@ def pad(stri, leng):
         result = result + " "
     return result
 
+
 def progressBar(width, completion):
     numCompleted = round(width * completion)
     return "[" + ("=" * numCompleted) + (" " * (width - numCompleted)) + "]"
+
 
 def runRounds(pair):
     roundResults = StringIO()
@@ -173,8 +175,12 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     combinations = list(itertools.combinations(STRATEGY_LIST, r=2))
     numCombinations = len(combinations)
     with Pool() as p:
-        for i, result in enumerate(zip(p.imap(runRounds, combinations), combinations), 1):
-            sys.stdout.write(f"\r{i}/{numCombinations} pairings ({NUM_RUNS} runs per pairing) {progressBar(50, i / numCombinations)}")
+        for i, result in enumerate(
+            zip(p.imap(runRounds, combinations), combinations), 1
+        ):
+            sys.stdout.write(
+                f"\r{i}/{numCombinations} pairings ({NUM_RUNS} runs per pairing) {progressBar(50, i / numCombinations)}"
+            )
             sys.stdout.flush()
             (avgScoreA, avgScoreB, roundResultsStr) = result[0]
             (nameA, nameB) = result[1]

@@ -1,6 +1,7 @@
 # We will cooperate repeatedly until our opponent betrays us twice.
 # Then, we will get angry and defect for the rest of time.
 
+
 def strategy(history, wrongedCount):
     if wrongedCount is None:
         wrongedCount = 0
