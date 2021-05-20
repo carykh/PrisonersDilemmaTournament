@@ -7,6 +7,7 @@ from multiprocessing import Pool
 from io import StringIO
 import statistics
 import argparse
+import sys
 
 parser = argparse.ArgumentParser(description="Run the Prisoner's Dilemma simulation.")
 parser.add_argument(
@@ -125,6 +126,9 @@ def pad(stri, leng):
         result = result + " "
     return result
 
+def progressBar(width, completion):
+    numCompleted = round(width * completion)
+    return "[" + ("=" * numCompleted) + (" " * (width - numCompleted)) + "]"
 
 def runRounds(pair):
     roundResults = StringIO()
@@ -167,13 +171,18 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     summaryFile = open(summaryFile, "w+")
 
     combinations = list(itertools.combinations(STRATEGY_LIST, r=2))
+    numCombinations = len(combinations)
     with Pool() as p:
-        for result in zip(p.map(runRounds, combinations), combinations):
+        for i, result in enumerate(zip(p.imap(runRounds, combinations), combinations), 1):
+            sys.stdout.write(f"\r{i}/{numCombinations} pairings ({NUM_RUNS} runs per pairing) {progressBar(50, i / numCombinations)}")
+            sys.stdout.flush()
             (avgScoreA, avgScoreB, roundResultsStr) = result[0]
             (nameA, nameB) = result[1]
             mainFile.write(roundResultsStr)
             scoreKeeper[nameA] += avgScoreA
             scoreKeeper[nameB] += avgScoreB
+    sys.stdout.write("\n")
+    sys.stdout.flush()
 
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):
