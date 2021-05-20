@@ -6,6 +6,5 @@ def strategy(history, memory):
     if history.shape[1] == 0:
         choice = 0
     else:
-        
         choice = random.choice(history[1])
-    return choice, None 
+    return choice, None
