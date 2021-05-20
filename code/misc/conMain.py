@@ -24,4 +24,3 @@ def strategy(history, memory):
             choice = 0
 
     return choice, None
-© 2021 GitHub, I
