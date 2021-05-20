@@ -168,6 +168,10 @@ if __name__ == "__main__":
     STRATEGY_FOLDER = "exampleStrats"
     RESULTS_FILE = "results.txt"
 
+    # seed for repeatability
+    SEED = 42
+    random.seed(SEED)
+    
     ## FULL PAIRING TOURNAMENT:
     runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
 
