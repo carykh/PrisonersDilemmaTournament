@@ -8,6 +8,7 @@ from io import StringIO
 import statistics
 import argparse
 import sys
+import json
 
 parser = argparse.ArgumentParser(description="Run the Prisoner's Dilemma simulation.")
 parser.add_argument(
@@ -32,6 +33,7 @@ STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo", "edward", "etc"]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
 RESULTS_FILE = "results.txt"
+RESULTS_JSON = "results.json"
 SUMMARY_FILE = "summary.txt"
 NUM_RUNS = args.num_runs
 
@@ -154,7 +156,7 @@ def runRounds(pair):
     roundResults.flush()
     roundResultsStr = roundResults.getvalue()
     roundResults.close()
-    return (avgScoreA, avgScoreB, roundResultsStr)
+    return (avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr)
 
 
 def runFullPairingTournament(inFolders, outFile, summaryFile):
@@ -174,6 +176,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
 
     combinations = list(itertools.combinations(STRATEGY_LIST, r=2))
     numCombinations = len(combinations)
+    allResults = []
     with Pool() as p:
         for i, result in enumerate(
             zip(p.imap(runRounds, combinations), combinations), 1
@@ -182,13 +185,26 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                 f"\r{i}/{numCombinations} pairings ({NUM_RUNS} runs per pairing) {progressBar(50, i / numCombinations)}"
             )
             sys.stdout.flush()
-            (avgScoreA, avgScoreB, roundResultsStr) = result[0]
+            (avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr) = result[0]
             (nameA, nameB) = result[1]
+            allResults.append({
+                'nameA': nameA,
+                'nameB': nameB,
+                'avgScoreA': avgScoreA,
+                'avgScoreB': avgScoreB,
+                'stdevA': stdevA,
+                'stdevB': stdevB,
+                'historyA': list(int(x) for x in firstRoundHistory[0]),
+                'historyB': list(int(x) for x in firstRoundHistory[1]),
+            })
             mainFile.write(roundResultsStr)
             scoreKeeper[nameA] += avgScoreA
             scoreKeeper[nameB] += avgScoreB
     sys.stdout.write("\n")
     sys.stdout.flush()
+
+    with open(RESULTS_JSON, "w+") as j:
+        j.write(json.dumps(allResults))
 
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):
