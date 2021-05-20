@@ -44,7 +44,7 @@ def runRound(STRATEGY_FOLDER, pair, minGameLength=200, logMultiplier=40):
         history[0,turn] = strategyMove(playerAmove)
         history[1,turn] = strategyMove(playerBmove)
         
-    return history
+    return history, memoryA, memoryB
     
 def tallyRoundScores(history, pointsArray=[[1,5],[0,3]]):
     """
@@ -62,7 +62,7 @@ def tallyRoundScores(history, pointsArray=[[1,5],[0,3]]):
         scoreB += pointsArray[playerBmove][playerAmove]
     return scoreA/ROUND_LENGTH, scoreB/ROUND_LENGTH
     
-def outputRoundResults(f, pair, roundHistory, scoresA, scoresB):
+def outputRoundResults(f, pair, roundHistory, scoresA, scoresB, memoryA, memoryB):
     moveLabels = ["D","C"] # 1: D, 2: C
     # D = defect,     betray,       sabotage,  free-ride,     etc.
     # C = cooperate,  stay silent,  comply,    upload files,  etc.
@@ -87,7 +87,13 @@ def outputRoundResults(f, pair, roundHistory, scoresA, scoresB):
         f.write("Winner: "+ winner)
     else:
         f.write("Tie!!")
-    f.write("\n\n")
+
+    f.write("\n")
+
+    f.write("Final memory for "+pair[0]+": "+str(memoryA)+"\n")
+    f.write("Final memory for "+pair[1]+": "+str(memoryB)+"\n")
+
+    f.write("\n")
 
 def outputTournamentResults(f, STRATEGY_LIST, scoreKeeper):
     scoresNumpy = np.zeros(len(scoreKeeper))
@@ -132,12 +138,12 @@ def runFullPairingTournament(inFolder, outFile):
         f = outFile
 
     for pair in itertools.combinations(STRATEGY_LIST, r=2):
-        [roundHistory, scoresA, scoresB] = _runSinglePairingTournament(inFolder, pair)
+        [roundHistory, scoresA, scoresB, memoryA, memoryB] = _runSinglePairingTournament(inFolder, pair)
 
         scoreKeeper[pair[0]] += scoresA
         scoreKeeper[pair[1]] += scoresB
 
-        outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
+        outputRoundResults(f, pair, roundHistory, scoresA, scoresB, memoryA, memoryB)
 
     outputTournamentResults(f, STRATEGY_LIST, scoreKeeper)
         
@@ -155,18 +161,18 @@ def runSinglePairingTournament(inFolder, outFile, pair):
     else:
         f = outFile
 
-    [roundHistory, scoresA, scoresB] = _runSinglePairingTournament(inFolder, pair)
+    [roundHistory, scoresA, scoresB, memoryA, memoryB] = _runSinglePairingTournament(inFolder, pair)
 
-    outputRoundResults(f, pair, roundHistory, scoresA, scoresB) 
+    outputRoundResults(f, pair, roundHistory, scoresA, scoresB, memoryA, memoryB) 
 
     f.flush()
     f.close()
 
 def _runSinglePairingTournament(inFolder, pair):
-    roundHistory = runRound(inFolder, pair)
+    roundHistory, memoryA, memoryB = runRound(inFolder, pair)
     scoresA, scoresB = tallyRoundScores(roundHistory)
 
-    return roundHistory, scoresA, scoresB
+    return roundHistory, scoresA, scoresB, memoryA, memoryB
 
 if __name__ == "__main__":
     STRATEGY_FOLDER = "exampleStrats"
@@ -175,14 +181,13 @@ if __name__ == "__main__":
     SEED = 42
     random.seed(SEED)
 
-    # FULL PAIRING TOURNAMENT:
+    ## FULL PAIRING TOURNAMENT:
     RESULTS_FILE = "results.txt"
     runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
     print("Done with everything! Results file written to "+RESULTS_FILE)
 
     ## SINGLE PAIRING TOURNAMENT:
     # RESULTS_FILE = "results_singles.txt"
-    # pair = ["detective", "ftft"]
+    # pair = ["mystrategy", "joss"]
     # runSinglePairingTournament(STRATEGY_FOLDER, RESULTS_FILE, pair)
     # print("Done with everything! Results file written to "+RESULTS_FILE)
-

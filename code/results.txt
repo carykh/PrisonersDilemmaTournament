@@ -4,6 +4,8 @@ D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
 Final score for alwaysCooperate: 0.0
 Final score for alwaysDefect: 5.0
 Winner: alwaysDefect
+Final memory for alwaysCooperate: None
+Final memory for alwaysDefect: None
 
 alwaysCooperate (P1)  VS.  detective (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -11,6 +13,8 @@ C D C C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
 Final score for alwaysCooperate: 0.025936599423631124
 Final score for detective: 4.982708933717579
 Winner: detective
+Final memory for alwaysCooperate: None
+Final memory for detective: True
 
 alwaysCooperate (P1)  VS.  ftft (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -18,6 +22,8 @@ C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for alwaysCooperate: 3.0
 Final score for ftft: 3.0
 Tie!!
+Final memory for alwaysCooperate: None
+Final memory for ftft: None
 
 alwaysCooperate (P1)  VS.  grimTrigger (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -25,6 +31,8 @@ C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for alwaysCooperate: 3.0
 Final score for grimTrigger: 3.0
 Tie!!
+Final memory for alwaysCooperate: None
+Final memory for grimTrigger: False
 
 alwaysCooperate (P1)  VS.  joss (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -32,6 +40,8 @@ C C D C D C C D C C C C C C D C C C C C C D D C C C C C C C C C C C C C D C C D 
 Final score for alwaysCooperate: 2.660377358490566
 Final score for joss: 3.2264150943396226
 Winner: joss
+Final memory for alwaysCooperate: None
+Final memory for joss: None
 
 alwaysCooperate (P1)  VS.  random (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -39,6 +49,8 @@ C C D C C C D C C D C C C C C C C D C C C C D D D C D C D D C D D D C C D C C C 
 Final score for alwaysCooperate: 1.591549295774648
 Final score for random: 3.9389671361502345
 Winner: random
+Final memory for alwaysCooperate: None
+Final memory for random: None
 
 alwaysCooperate (P1)  VS.  simpleton (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -46,6 +58,8 @@ C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for alwaysCooperate: 3.0
 Final score for simpleton: 3.0
 Tie!!
+Final memory for alwaysCooperate: None
+Final memory for simpleton: None
 
 alwaysCooperate (P1)  VS.  titForTat (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -53,6 +67,8 @@ C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for alwaysCooperate: 3.0
 Final score for titForTat: 3.0
 Tie!!
+Final memory for alwaysCooperate: None
+Final memory for titForTat: None
 
 alwaysDefect (P1)  VS.  detective (P2)
 D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -60,6 +76,8 @@ C D C C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
 Final score for alwaysDefect: 1.06
 Final score for detective: 0.985
 Winner: alwaysDefect
+Final memory for alwaysDefect: None
+Final memory for detective: False
 
 alwaysDefect (P1)  VS.  ftft (P2)
 D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -67,6 +85,8 @@ C C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
 Final score for alwaysDefect: 1.0363636363636364
 Final score for ftft: 0.990909090909091
 Winner: alwaysDefect
+Final memory for alwaysDefect: None
+Final memory for ftft: None
 
 alwaysDefect (P1)  VS.  grimTrigger (P2)
 D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -74,6 +94,8 @@ C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
 Final score for alwaysDefect: 1.0198019801980198
 Final score for grimTrigger: 0.995049504950495
 Winner: alwaysDefect
+Final memory for alwaysDefect: None
+Final memory for grimTrigger: True
 
 alwaysDefect (P1)  VS.  joss (P2)
 D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -81,6 +103,8 @@ C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
 Final score for alwaysDefect: 1.0196078431372548
 Final score for joss: 0.9950980392156863
 Winner: alwaysDefect
+Final memory for alwaysDefect: None
+Final memory for joss: None
 
 alwaysDefect (P1)  VS.  random (P2)
 D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -88,6 +112,8 @@ C C D D C C D D C C C C D C C C D C D D D D D D C C C C D C C C C C C C D D D D 
 Final score for alwaysDefect: 2.8620689655172415
 Final score for random: 0.5344827586206896
 Winner: alwaysDefect
+Final memory for alwaysDefect: None
+Final memory for random: None
 
 alwaysDefect (P1)  VS.  simpleton (P2)
 D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -95,6 +121,8 @@ C D C D C D C D C D C D C D C D C D C D C D C D C D C D C D C D C D C D C D C D 
 Final score for alwaysDefect: 3.0
 Final score for simpleton: 0.5
 Winner: alwaysDefect
+Final memory for alwaysDefect: None
+Final memory for simpleton: None
 
 alwaysDefect (P1)  VS.  titForTat (P2)
 D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -102,6 +130,8 @@ C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
 Final score for alwaysDefect: 1.0103626943005182
 Final score for titForTat: 0.9974093264248705
 Winner: alwaysDefect
+Final memory for alwaysDefect: None
+Final memory for titForTat: None
 
 detective (P1)  VS.  ftft (P2)
 C D C C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -109,6 +139,8 @@ C C C C C C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
 Final score for detective: 1.0865384615384615
 Final score for ftft: 1.0144230769230769
 Winner: detective
+Final memory for detective: True
+Final memory for ftft: None
 
 detective (P1)  VS.  grimTrigger (P2)
 C D C C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -116,6 +148,8 @@ C C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
 Final score for detective: 1.0196078431372548
 Final score for grimTrigger: 1.0441176470588236
 Winner: grimTrigger
+Final memory for detective: False
+Final memory for grimTrigger: True
 
 detective (P1)  VS.  joss (P2)
 C D C C C C C C C C C C C C C C C C C C C C C D C D C D C D C D C D C D C D C D C D C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -123,6 +157,8 @@ C C D C C C C C C C C C C C C C C C C C C C D C D C D C D C D C D C D C D C D C 
 Final score for detective: 1.3348837209302327
 Final score for joss: 1.3581395348837209
 Winner: joss
+Final memory for detective: False
+Final memory for joss: None
 
 detective (P1)  VS.  random (P2)
 C D C C D D D C C C D C C D D C D C D C D C C D D D D C C C D C C C C C D D D D C D D D C C C C C C D D D D D D D C C D D C D D D C C D C C C D C C D D D C C D D C C D C D C D C D C D C D D D D D C D C D C D D C D C C D D C D D D C D C C C C D D C C C C D C C C C C D D D D D C D C D D D D C D C D D D C C D D C C D D C D C D D C C D C D C C C C D D C D D D D D D C D C D C D D D C D C C D D D C C D D D C C D D C D D C C D D C C C C C D C C D C D C C C C D C D D C D D D C C D D C D D D D D D C C C D C D D C C D C C D D C D C C D D C D C D D C D C D C C D C D C C C 
@@ -130,6 +166,8 @@ D D C D D D C C C D C C D D C D C D C D C C D D D D C C C D C C C C C D D D D C 
 Final score for detective: 2.204225352112676
 Final score for random: 2.23943661971831
 Winner: random
+Final memory for detective: False
+Final memory for random: None
 
 detective (P1)  VS.  simpleton (P2)
 C D C C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D 
@@ -137,6 +175,8 @@ C C D D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D 
 Final score for detective: 1.9950738916256157
 Final score for simpleton: 2.019704433497537
 Winner: simpleton
+Final memory for detective: False
+Final memory for simpleton: None
 
 detective (P1)  VS.  titForTat (P2)
 C D C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -144,6 +184,8 @@ C C D C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for detective: 2.995633187772926
 Final score for titForTat: 2.995633187772926
 Tie!!
+Final memory for detective: False
+Final memory for titForTat: None
 
 ftft (P1)  VS.  grimTrigger (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -151,6 +193,8 @@ C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for ftft: 3.0
 Final score for grimTrigger: 3.0
 Tie!!
+Final memory for ftft: None
+Final memory for grimTrigger: False
 
 ftft (P1)  VS.  joss (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -158,6 +202,8 @@ C C C D C C C C C C C C C C C D C C C C C C C D C C C C C C C C C C D C D C C C 
 Final score for ftft: 2.7156398104265405
 Final score for joss: 3.18957345971564
 Winner: joss
+Final memory for ftft: None
+Final memory for joss: None
 
 ftft (P1)  VS.  random (P2)
 C C C C C C C C C C C C D D D C C D D C C C C D D D C C C C D D D C C C C C C C C D C C C C C D D C C C D C C C D D D D C C C D C C C C C C D D D C C C C C D D D C C C C C D C C D D C C C C D D D C C C C C C C C D D C C C D C C D D D D D C C D C C D C C D C C C C C C C C C C C C D D C C C C D C C C C D D D C C D D D D C C C D C C D C C D D D D D C C D D C C C C C C D D D C C C D C C C C C C C C C C D D C C C C C D D C C D D C C C C C C C 
@@ -165,6 +211,8 @@ C D C C C C D C D C D D D D C D D D C C C D D D D C D C D D D D C D C D C D C D 
 Final score for ftft: 1.8190045248868778
 Final score for random: 2.9502262443438916
 Winner: random
+Final memory for ftft: None
+Final memory for random: None
 
 ftft (P1)  VS.  simpleton (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -172,6 +220,8 @@ C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for ftft: 3.0
 Final score for simpleton: 3.0
 Tie!!
+Final memory for ftft: None
+Final memory for simpleton: None
 
 ftft (P1)  VS.  titForTat (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -179,6 +229,8 @@ C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for ftft: 3.0
 Final score for titForTat: 3.0
 Tie!!
+Final memory for ftft: None
+Final memory for titForTat: None
 
 grimTrigger (P1)  VS.  joss (P2)
 C C C C C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -186,6 +238,8 @@ C C C C D C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
 Final score for grimTrigger: 1.0482456140350878
 Final score for joss: 1.0482456140350878
 Tie!!
+Final memory for grimTrigger: True
+Final memory for joss: None
 
 grimTrigger (P1)  VS.  random (P2)
 C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -193,6 +247,8 @@ D D D D D D D D D C D D C D D D C C C C D D D C C D C D C D D D D D D C D C C D 
 Final score for grimTrigger: 2.8789237668161434
 Final score for random: 0.547085201793722
 Winner: grimTrigger
+Final memory for grimTrigger: True
+Final memory for random: None
 
 grimTrigger (P1)  VS.  simpleton (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -200,6 +256,8 @@ C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for grimTrigger: 3.0
 Final score for simpleton: 3.0
 Tie!!
+Final memory for grimTrigger: False
+Final memory for simpleton: None
 
 grimTrigger (P1)  VS.  titForTat (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -207,6 +265,8 @@ C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for grimTrigger: 3.0
 Final score for titForTat: 3.0
 Tie!!
+Final memory for grimTrigger: False
+Final memory for titForTat: None
 
 joss (P1)  VS.  random (P2)
 C C D D C C C D C D C D C C C D D D D C C D C D D D C C D C C D C C D C D D D D D D C C C D C C D C D C C C C D D D D D D D C D D D D C D C D C D D D D D D D C C D D D D C D D C D D C C D C C C D D C C D C D D C D D C C D D D D C D D D C C D D D D D D C D D D C C D C D D D D D D C C C C C D D D D D C D C C D C C C C D C C D D C C D C D C D C C C C D D C D D D C D D D C D C C D C D D C C C C C C D D C D C C D C C D C D C D C 
@@ -214,6 +274,8 @@ C D D C C C D C D C D C C C D D D D C C D C D D D C C D C C D C C D C D D D D C 
 Final score for joss: 2.303738317757009
 Final score for random: 2.116822429906542
 Winner: joss
+Final memory for joss: None
+Final memory for random: None
 
 joss (P1)  VS.  simpleton (P2)
 C C C D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D D D C D D C D D C D D C D D C D D D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D D D C D D C D D D D C D D C D D C D D D D C D D C D D D D C D D D D C D D C D D C D D C D D C D D C D D C D D C D D D D C D D C D D C D D D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D D D D D C D D C D D C D D C D D C D D C D D C D D C D D C 
@@ -221,6 +283,8 @@ C C C C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C D D C 
 Final score for joss: 2.1083333333333334
 Final score for simpleton: 1.8791666666666667
 Winner: joss
+Final memory for joss: None
+Final memory for simpleton: None
 
 joss (P1)  VS.  titForTat (P2)
 C C C C C C C C C C C D C D C D C D C D C D C D C D C D C D C D C D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D D 
@@ -228,6 +292,8 @@ C C C C C C C C C C C C D C D C D C D C D C D C D C D C D C D C D C D D D D D D 
 Final score for joss: 1.2408163265306122
 Final score for titForTat: 1.220408163265306
 Winner: joss
+Final memory for joss: None
+Final memory for titForTat: None
 
 random (P1)  VS.  simpleton (P2)
 C C C C D D C C D C C C C D D D D D D D D C D D D C C D D D C D C D D D D D D C C C C D D C C D D D D D D C C D C D D D C C D C D C D C D C C D C D D D D D D D C D C C D C C D D D C C C C D D D C D C C D D C D C C D D C C C D C C D D D D D D C C C D C D C C C C C D D C C D D C C C D D D D D C D D D C C D C C C C C C C C D C D D C C C C C C D D D C D D C C C D D C D C D C C D C C D C C D C D D D C C D C D D C C C C C D C C C C D C D D D D C C C C D D D D C C C C C C D D D D C D D C C D D D D D D D C C C C C C D D D C D D C C D D C D D C C D D C C D C D C D D D C C C C D D C C D D C D D C C D D C C D D D C D D D C D C C D D C C C D C 
@@ -235,6 +301,8 @@ C C C C C D C C C D D D D D C D C D C D C D D C D C C C D C D D C C D C D C D C 
 Final score for random: 2.23125
 Final score for simpleton: 2.246875
 Winner: simpleton
+Final memory for random: None
+Final memory for simpleton: None
 
 random (P1)  VS.  titForTat (P2)
 D D D C C D D D D D C C C C D D D D C C C D C D C D C C C D C D C D C D C C D D C D C C D D C C C C D D D D C D D D D D C C D D D C C C D D C C D C D D D D D C C C D C C C C D C D D C C D C C D D C C D C D C D D D D C C D C D C D C C D D C C C C C D C D D D C C D C D D C C C D C D D D C D C C C C D D C D C C D D D D C D C C D D C C C D D C D D D C D D D C D C D C C C C C C C D C C D C C C D D C C C C C D C C D D D D D D D C D C 
@@ -242,6 +310,8 @@ C D D D C C D D D D D C C C C D D D D C C C D C D C D C C C D C D C D C D C C D 
 Final score for random: 2.259259259259259
 Final score for titForTat: 2.259259259259259
 Tie!!
+Final memory for random: None
+Final memory for titForTat: None
 
 simpleton (P1)  VS.  titForTat (P2)
 C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
@@ -249,6 +319,8 @@ C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C 
 Final score for simpleton: 3.0
 Final score for titForTat: 3.0
 Tie!!
+Final memory for simpleton: None
+Final memory for titForTat: None
 
 
 
