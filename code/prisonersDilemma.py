@@ -29,7 +29,7 @@ args = parser.parse_args()
 
 STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo", "etc"]
 if args.use_slow:
-    STRATEGY_FOLDERS.append("skip")
+    STRATEGY_FOLDERS.append("slow")
 RESULTS_FILE = "results.txt"
 SUMMARY_FILE = "summary.txt"
 NUM_RUNS = args.num_runs
