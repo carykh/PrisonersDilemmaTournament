@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-let view = ['nice'];
+let view = ['edward'];
 
 fs.readFile('./results.txt', 'utf8', (err, data) => {
   if (err) throw err;
@@ -8,8 +8,10 @@ fs.readFile('./results.txt', 'utf8', (err, data) => {
 })
 
 function run(txt){
+  let scores = false;
   let ans = txt.split('\n');
   for(let i=0;i<ans.length;i++){
+    if(ans[i].indexOf('SCORES')>0){scores=true;}
     ans[i]=ans[i].replace(/(?!VS\.|\S\.)[a-zA-Z]+\./g,'');
     if(ans[i][0] === 'C' || ans[i][0] === 'D'){
       let t = ans[i].split(' ');
@@ -45,6 +47,14 @@ function run(txt){
       else{
         ans[i]+='\n';
       }
+    }
+
+    if(scores && ans[i].indexOf(':')>0){
+      q=ans[i].slice(0,4);
+      ans[i]=ans[i].slice(4).replace(/ /g,'');
+      ans[i]=q+ans[i].replace(':',''.padEnd(20-ans[i].indexOf(':'),' '));
+      ans[i]=ans[i].replace('average',' average');
+      ans[i]=ans[i].replace('(',' (');
     }
   }
   console.log(ans.join(''));
