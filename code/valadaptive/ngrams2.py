@@ -27,8 +27,8 @@ def strategy(history, memory):
     if toPredict in memory:
         responses = memory[toPredict]
 
-        # choice = 1 if responses[1] > responses[0] else 0
-        choice = random.choices([0, 1], responses)[0]
+        choice = 0 if responses[1] < responses[0] and sum(responses) > 1 else 1
+        # choice = random.choices([0, 1], responses)[0]
     else:
         choice = 0 if history.shape[1] >= 1 and history[1, -1] == 0 else 1
     # print(choice)
