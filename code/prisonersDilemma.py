@@ -6,6 +6,7 @@ import random
 
 STRATEGY_FOLDER = "exampleStrats"
 RESULTS_FILE = "results.txt"
+CSV_FILE = "results.csv"
 
 pointsArray = [[1,5],[0,3]] # The i-j-th element of this array is how many points you receive if you do play i, and your opponent does play j.
 moveLabels = ["D","C"]
@@ -63,7 +64,7 @@ def tallyRoundScores(history):
         scoreB += pointsArray[playerBmove][playerAmove]
     return scoreA/ROUND_LENGTH, scoreB/ROUND_LENGTH
     
-def outputRoundResults(f, pair, roundHistory, scoresA, scoresB):
+def outputRoundResults(f, c, pair, roundHistory, scoresA, scoresB):
     f.write(pair[0]+" (P1)  VS.  "+pair[1]+" (P2)\n")
     for p in range(2):
         for t in range(roundHistory.shape[1]):
@@ -71,6 +72,7 @@ def outputRoundResults(f, pair, roundHistory, scoresA, scoresB):
             f.write(moveLabels[move]+" ")
         f.write("\n")
     f.write("Final score for "+pair[0]+": "+str(scoresA)+"\n")
+    c.write(pair[0] + "," + pair[1] + "," + str(scoresA) + "," + str(scoresB) + "\n")
     f.write("Final score for "+pair[1]+": "+str(scoresB)+"\n")
     f.write("\n")
     
@@ -80,7 +82,7 @@ def pad(stri, leng):
         result = result+" "
     return result
     
-def runFullPairingTournament(inFolder, outFile):
+def runFullPairingTournament(inFolder, outFile, csvFile):
     print("Starting tournament, reading files from "+inFolder)
     scoreKeeper = {}
     STRATEGY_LIST = []
@@ -92,11 +94,14 @@ def runFullPairingTournament(inFolder, outFile):
     for strategy in STRATEGY_LIST:
         scoreKeeper[strategy] = 0
         
+    c = open(csvFile,"w+")
     f = open(outFile,"w+")
+    
+    c.write("competitorA,competitorB,scoresA,scoresB\n")
     for pair in itertools.combinations(STRATEGY_LIST, r=2):
         roundHistory = runRound(pair)
         scoresA, scoresB = tallyRoundScores(roundHistory)
-        outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
+        outputRoundResults(f, c, pair, roundHistory, scoresA, scoresB)
         scoreKeeper[pair[0]] += scoresA
         scoreKeeper[pair[1]] += scoresB
         
@@ -117,4 +122,4 @@ def runFullPairingTournament(inFolder, outFile):
     print("Done with everything! Results file written to "+RESULTS_FILE)
     
     
-runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
+runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE, CSV_FILE)
