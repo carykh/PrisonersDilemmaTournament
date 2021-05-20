@@ -84,7 +84,7 @@ def runFullPairingTournament(inFolder, outFile):
     print("Starting tournament, reading files from "+inFolder)
     scoreKeeper = {}
     STRATEGY_LIST = []
-    for file in os.listdir(inFolder):
+    for file in os.listdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), inFolder)):
         if file.endswith(".py"):
             STRATEGY_LIST.append(file[:-3])
             
