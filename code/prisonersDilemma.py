@@ -3,6 +3,7 @@ import itertools
 import importlib
 import numpy as np
 import random
+import pathlib
 
 def getVisibleHistory(history, player, turn):
     historySoFar = history[:,:turn].copy()
@@ -74,39 +75,21 @@ def outputRoundResults(f, pair, roundHistory, scoresA, scoresB):
         f.write("\n")
     f.write("Final score for "+pair[0]+": "+str(scoresA)+"\n")
     f.write("Final score for "+pair[1]+": "+str(scoresB)+"\n")
-    f.write("\n")
     
-def pad(stri, leng):
-    result = stri
-    for i in range(len(stri),leng):
-        result = result+" "
-    return result
+    if scoresA > scoresB:
+        winner = pair[0]
+    elif scoresA < scoresB:
+        winner = pair[1]
+    else:
+        winner = None
     
-def fetch_strategy(inFolder):
-    STRATEGY_LIST = []
-    for file in os.listdir(inFolder):
-        if file.endswith(".py"):
-            STRATEGY_LIST.append(file[:-3])
-    return STRATEGY_LIST
+    if winner:
+        f.write("Winner: "+ winner)
+    else:
+        f.write("Tie!!")
+    f.write("\n\n")
 
-def runFullPairingTournament(inFolder, outFile):
-    print("Starting tournament, reading files from "+inFolder)
-    STRATEGY_LIST = fetch_strategy(inFolder)
-
-    scoreKeeper = {}
-    for strategy in STRATEGY_LIST:
-        scoreKeeper[strategy] = 0
-        
-    f = open(outFile,"w+")
-    for pair in itertools.combinations(STRATEGY_LIST, r=2):
-        roundHistory = runRound(inFolder, pair)
-        scoresA, scoresB = tallyRoundScores(roundHistory)
-        
-        scoreKeeper[pair[0]] += scoresA
-        scoreKeeper[pair[1]] += scoresB
-
-        outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
-        
+def outputTournamentResults(f, STRATEGY_LIST, scoreKeeper):
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):
         scoresNumpy[i] = scoreKeeper[STRATEGY_LIST[i]]
@@ -118,6 +101,41 @@ def runFullPairingTournament(inFolder, outFile):
         score = scoresNumpy[i]
         scorePer = score/(len(STRATEGY_LIST)-1)
         f.write("#"+str(rank+1)+": "+pad(STRATEGY_LIST[i]+":",16)+' %.3f'%score+'  (%.3f'%scorePer+" average)\n")
+
+def pad(stri, leng):
+    result = stri
+    for i in range(len(stri),leng):
+        result = result+" "
+    return result
+    
+def fetch_strategy(inFolder):
+    script_path = pathlib.Path(__file__).parent.absolute()
+
+    STRATEGY_LIST = []
+    for file in os.listdir(os.path.join(script_path, inFolder)):
+        if file.endswith(".py"):
+            STRATEGY_LIST.append(file[:-3])
+    return STRATEGY_LIST
+
+def runFullPairingTournament(inFolder, outFile):
+    print("Starting tournament, reading files from "+inFolder)
+    STRATEGY_LIST = fetch_strategy(inFolder)
+
+    scoreKeeper = {}
+    for strategy in STRATEGY_LIST:
+        scoreKeeper[strategy] = 0
+
+    script_path = pathlib.Path(__file__).parent.absolute()
+    f = open(os.path.join(script_path, outFile),"w+")
+    for pair in itertools.combinations(STRATEGY_LIST, r=2):
+        [roundHistory, scoresA, scoresB] = _runSinglePairingTournament(inFolder, pair)
+
+        scoreKeeper[pair[0]] += scoresA
+        scoreKeeper[pair[1]] += scoresB
+
+        outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
+
+    outputTournamentResults(f, STRATEGY_LIST, scoreKeeper)
         
     f.flush()
     f.close()
@@ -127,30 +145,32 @@ def runSinglePairingTournament(inFolder, outFile, pair):
     """
     pair = list of strategy being evaluated
     """
+    script_path = pathlib.Path(__file__).parent.absolute()
+    f = open(os.path.join(script_path, outFile),"w+")
 
-    scoreKeeper = {}
-    for strategy in pair:
-        scoreKeeper[strategy] = 0
-
-    roundHistory = runRound(inFolder, pair)
-    scoresA, scoresB = tallyRoundScores(roundHistory)
-    scoreKeeper[pair[0]] += scoresA
-    scoreKeeper[pair[1]] += scoresB
-
-    f = open(outFile,"w+")
-    outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
+    [roundHistory, scoresA, scoresB] = _runSinglePairingTournament(inFolder, pair)
+    print("Tournament Over!")
+    
+    print("Writing result...")
+    outputRoundResults(f, pair, roundHistory, scoresA, scoresB)   
+    print("Done! Writing results file written to "+outFile)
 
     f.flush()
     f.close()
-    print("Done with everything! Results file written to "+RESULTS_FILE)
+
+def _runSinglePairingTournament(inFolder, pair):
+    roundHistory = runRound(inFolder, pair)
+    scoresA, scoresB = tallyRoundScores(roundHistory)
+
+    return roundHistory, scoresA, scoresB
 
 if __name__ == "__main__":
     STRATEGY_FOLDER = "exampleStrats"
     RESULTS_FILE = "results.txt"
 
     ## FULL PAIRING TOURNAMENT:
-    # runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
+    runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
 
     ## SINGLE PAIRING TOURNAMENT:
-    pair = ["detective", "ftft"]
-    runSinglePairingTournament(STRATEGY_FOLDER, RESULTS_FILE, pair)
+    # pair = ["detective", "ftft"]
+    # runSinglePairingTournament(STRATEGY_FOLDER, RESULTS_FILE, pair)

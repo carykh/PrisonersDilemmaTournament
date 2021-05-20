@@ -1,6 +1,5 @@
-# Ignore output except the one inside code
+# Ignore output
 results.txt
-!code/results.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
