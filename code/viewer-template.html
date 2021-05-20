@@ -75,12 +75,12 @@
                     <h3>${result.nameA} vs ${result.nameB}</h3>
                     <table class="history">
                         <tr>
-                            <th class="round-strategy">${(result.avgScoreA > result.avgScoreB ? '👑 ' : '') + result.nameA}</th>
+                            <th class="round-strategy">${result.nameA}</th>
                             <td class="round-score">${result.avgScoreA.toFixed(3)} ± ${result.stdevA.toFixed(3)}</td>
                             ${historyToTableCells(result.historyA)}
                         </tr>
                         <tr>
-                            <th class="round-strategy">${(result.avgScoreB > result.avgScoreA ? '👑 ' : '') + result.nameB}</th>
+                            <th class="round-strategy">${result.nameB}</th>
                             <td class="round-score">${result.avgScoreB.toFixed(3)} ± ${result.stdevB.toFixed(3)}</td>
                             ${historyToTableCells(result.historyB)}
                         </tr>
