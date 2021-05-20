@@ -125,8 +125,12 @@ def runFullPairingTournament(inFolder, outFile):
     for strategy in STRATEGY_LIST:
         scoreKeeper[strategy] = 0
 
-    script_path = pathlib.Path(__file__).parent.absolute()
-    f = open(os.path.join(script_path, outFile),"w+")
+    if isinstance(outFile, str):
+        script_path = pathlib.Path(__file__).parent.absolute()
+        f = open(os.path.join(script_path, outFile),"w+")
+    else:
+        f = outFile
+
     for pair in itertools.combinations(STRATEGY_LIST, r=2):
         [roundHistory, scoresA, scoresB] = _runSinglePairingTournament(inFolder, pair)
 
@@ -139,21 +143,21 @@ def runFullPairingTournament(inFolder, outFile):
         
     f.flush()
     f.close()
-    print("Done with everything! Results file written to "+RESULTS_FILE)
     
 def runSinglePairingTournament(inFolder, outFile, pair):
     """
     pair = list of strategy being evaluated
     """
-    script_path = pathlib.Path(__file__).parent.absolute()
-    f = open(os.path.join(script_path, outFile),"w+")
+
+    if isinstance(outFile, str):
+        script_path = pathlib.Path(__file__).parent.absolute()
+        f = open(os.path.join(script_path, outFile),"w+")
+    else:
+        f = outFile
 
     [roundHistory, scoresA, scoresB] = _runSinglePairingTournament(inFolder, pair)
-    print("Tournament Over!")
-    
-    print("Writing result...")
-    outputRoundResults(f, pair, roundHistory, scoresA, scoresB)   
-    print("Done! Writing results file written to "+outFile)
+
+    outputRoundResults(f, pair, roundHistory, scoresA, scoresB) 
 
     f.flush()
     f.close()
@@ -166,15 +170,19 @@ def _runSinglePairingTournament(inFolder, pair):
 
 if __name__ == "__main__":
     STRATEGY_FOLDER = "exampleStrats"
-    RESULTS_FILE = "results.txt"
 
     # seed for repeatability
     SEED = 42
     random.seed(SEED)
-    
-    ## FULL PAIRING TOURNAMENT:
+
+    # FULL PAIRING TOURNAMENT:
+    RESULTS_FILE = "results.txt"
     runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
+    print("Done with everything! Results file written to "+RESULTS_FILE)
 
     ## SINGLE PAIRING TOURNAMENT:
+    # RESULTS_FILE = "results_singles.txt"
     # pair = ["detective", "ftft"]
     # runSinglePairingTournament(STRATEGY_FOLDER, RESULTS_FILE, pair)
+    # print("Done with everything! Results file written to "+RESULTS_FILE)
+
