@@ -1,7 +1,5 @@
 # Ignore output
-results.txt
-results_singles.txt
-results_mystrategy.txt
+*.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
