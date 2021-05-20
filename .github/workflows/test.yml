@@ -12,12 +12,11 @@ jobs:
         with:
           python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-      - run: cd code
-      - run: python prisonersDilemma.py
+      - run: cd code && python prisonersDilemma.py
       - id: summary
-        run: echo "::set-output name=file::$(cat summary.txt)"
+        run: echo "::set-output name=file::$(cat code/summary.txt)"
       - id: results
-        run: echo "::set-output name=file::$(cat results.txt)"
+        run: echo "::set-output name=file::$(cat code/results.txt)"
   publish:
     runs-on: ubuntu-latest
     needs: run
