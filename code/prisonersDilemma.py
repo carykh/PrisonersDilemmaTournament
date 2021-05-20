@@ -3,9 +3,21 @@ import itertools
 import importlib
 import numpy as np
 import random
+from multiprocessing import Pool
+from io import StringIO
+import statistics
+import argparse
 
-STRATEGY_FOLDER = "exampleStrats"
+parser = argparse.ArgumentParser(description='Run the Prisoner\'s Dilemma simulation.')
+parser.add_argument('-n', '--num-runs', dest='num_runs', type=int,
+                    default=100, help='Number of runs to average out')
+
+args = parser.parse_args()
+
+STRATEGY_FOLDERS = ["exampleStrats", "myStrats"]
 RESULTS_FILE = "results.txt"
+SUMMARY_FILE = "summary.txt"
+NUM_RUNS = args.num_runs
 
 pointsArray = [[1,5],[0,3]] # The i-j-th element of this array is how many points you receive if you do play i, and your opponent does play j.
 moveLabels = ["D","C"]
@@ -36,8 +48,8 @@ def strategyMove(move):
         return move
 
 def runRound(pair):
-    moduleA = importlib.import_module(STRATEGY_FOLDER+"."+pair[0])
-    moduleB = importlib.import_module(STRATEGY_FOLDER+"."+pair[1])
+    moduleA = importlib.import_module(pair[0])
+    moduleB = importlib.import_module(pair[1])
     memoryA = None
     memoryB = None
     
@@ -63,15 +75,15 @@ def tallyRoundScores(history):
         scoreB += pointsArray[playerBmove][playerAmove]
     return scoreA/ROUND_LENGTH, scoreB/ROUND_LENGTH
     
-def outputRoundResults(f, pair, roundHistory, scoresA, scoresB):
+def outputRoundResults(f, pair, roundHistory, scoresA, scoresB, stdevA, stdevB):
     f.write(pair[0]+" (P1)  VS.  "+pair[1]+" (P2)\n")
     for p in range(2):
         for t in range(roundHistory.shape[1]):
             move = roundHistory[p,t]
             f.write(moveLabels[move]+" ")
         f.write("\n")
-    f.write("Final score for "+pair[0]+": "+str(scoresA)+"\n")
-    f.write("Final score for "+pair[1]+": "+str(scoresB)+"\n")
+    f.write("Final score for "+pair[0]+": "+str(scoresA)+" ± "+str(stdevA)+"\n")
+    f.write("Final score for "+pair[1]+": "+str(scoresB)+" ± "+str(stdevB)+"\n")
     f.write("\n")
     
 def pad(stri, leng):
@@ -79,42 +91,73 @@ def pad(stri, leng):
     for i in range(len(stri),leng):
         result = result+" "
     return result
+
+def runRounds(pair):
+    roundResults = StringIO()
+    allScoresA = []
+    allScoresB = []
+    firstRoundHistory = None
+    for i in range(NUM_RUNS):
+        roundHistory = runRound(pair)
+        scoresA, scoresB = tallyRoundScores(roundHistory)
+        if i == 0:
+            firstRoundHistory = roundHistory
+        allScoresA.append(scoresA)
+        allScoresB.append(scoresB)
+    avgScoreA = statistics.mean(allScoresA)
+    avgScoreB = statistics.mean(allScoresB)
+    stdevA = statistics.stdev(allScoresA)
+    stdevB = statistics.stdev(allScoresB)
+    outputRoundResults(roundResults, pair, firstRoundHistory, scoresA, scoresB, stdevA, stdevB)
+    roundResults.flush()
+    roundResultsStr = roundResults.getvalue()
+    roundResults.close()
+    return (avgScoreA, avgScoreB, roundResultsStr)
     
-def runFullPairingTournament(inFolder, outFile):
-    print("Starting tournament, reading files from "+inFolder)
+def runFullPairingTournament(inFolders, outFile, summaryFile):
+    print("Starting tournament, reading files from " +  ", ".join(inFolders))
     scoreKeeper = {}
     STRATEGY_LIST = []
-    for file in os.listdir(inFolder):
-        if file.endswith(".py"):
-            STRATEGY_LIST.append(file[:-3])
+    for inFolder in inFolders:
+        for file in os.listdir(inFolder):
+            if file.endswith(".py"):
+                STRATEGY_LIST.append(inFolder + "." + file[:-3])
             
             
     for strategy in STRATEGY_LIST:
         scoreKeeper[strategy] = 0
         
-    f = open(outFile,"w+")
-    for pair in itertools.combinations(STRATEGY_LIST, r=2):
-        roundHistory = runRound(pair)
-        scoresA, scoresB = tallyRoundScores(roundHistory)
-        outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
-        scoreKeeper[pair[0]] += scoresA
-        scoreKeeper[pair[1]] += scoresB
+    mainFile = open(outFile,"w+")
+    summaryFile = open(summaryFile,"w+")
+
+    combinations = list(itertools.combinations(STRATEGY_LIST, r=2))
+    with Pool() as p:
+        for result in zip(p.map(runRounds, combinations), combinations):
+            (avgScoreA, avgScoreB, roundResultsStr) = result[0]
+            (nameA, nameB) = result[1]
+            mainFile.write(roundResultsStr)
+            scoreKeeper[nameA] += avgScoreA
+            scoreKeeper[nameB] += avgScoreB
         
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):
         scoresNumpy[i] = scoreKeeper[STRATEGY_LIST[i]]
     rankings = np.argsort(scoresNumpy)
 
-    f.write("\n\nTOTAL SCORES\n")
+    mainFile.write("\n\nTOTAL SCORES\n")
     for rank in range(len(STRATEGY_LIST)):
         i = rankings[-1-rank]
         score = scoresNumpy[i]
         scorePer = score/(len(STRATEGY_LIST)-1)
-        f.write("#"+str(rank+1)+": "+pad(STRATEGY_LIST[i]+":",16)+' %.3f'%score+'  (%.3f'%scorePer+" average)\n")
+        scoreLine = "#"+str(rank+1)+": "+pad(STRATEGY_LIST[i]+":",16)+' %.3f'%score+'  (%.3f'%scorePer+" average)\n"
+        mainFile.write(scoreLine)
+        summaryFile.write(scoreLine)
         
-    f.flush()
-    f.close()
+    mainFile.flush()
+    mainFile.close()
+    summaryFile.flush()
+    summaryFile.close()
     print("Done with everything! Results file written to "+RESULTS_FILE)
-    
-    
-runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
+
+if __name__ == '__main__':
+    runFullPairingTournament(STRATEGY_FOLDERS, RESULTS_FILE, SUMMARY_FILE)
