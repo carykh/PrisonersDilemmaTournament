@@ -59,7 +59,7 @@ moveLabels = ["D", "C"]
 def getVisibleHistory(history, player, turn):
     historySoFar = history[:, :turn].copy()
     if player == 1:
-        historySoFar = np.flip(historySoFar, 0)
+        historySoFar = historySoFar[::-1]
     return historySoFar
 
 
