@@ -185,31 +185,53 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                 f"\r{i}/{numCombinations} pairings ({NUM_RUNS} runs per pairing) {progressBar(50, i / numCombinations)}"
             )
             sys.stdout.flush()
-            (avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr) = result[0]
+            (
+                avgScoreA,
+                avgScoreB,
+                stdevA,
+                stdevB,
+                firstRoundHistory,
+                roundResultsStr,
+            ) = result[0]
             (nameA, nameB) = result[1]
-            allResults.append({
-                'nameA': nameA,
-                'nameB': nameB,
-                'avgScoreA': avgScoreA,
-                'avgScoreB': avgScoreB,
-                'stdevA': stdevA,
-                'stdevB': stdevB,
-                'historyA': list(int(x) for x in firstRoundHistory[0]),
-                'historyB': list(int(x) for x in firstRoundHistory[1]),
-            })
+            allResults.append(
+                {
+                    "nameA": nameA,
+                    "nameB": nameB,
+                    "avgScoreA": avgScoreA,
+                    "avgScoreB": avgScoreB,
+                    "stdevA": stdevA,
+                    "stdevB": stdevB,
+                    "historyA": list(int(x) for x in firstRoundHistory[0]),
+                    "historyB": list(int(x) for x in firstRoundHistory[1]),
+                }
+            )
             mainFile.write(roundResultsStr)
             scoreKeeper[nameA] += avgScoreA
             scoreKeeper[nameB] += avgScoreB
     sys.stdout.write("\n")
     sys.stdout.flush()
 
-    with open(RESULTS_JSON, "w+") as j:
-        j.write(json.dumps(allResults))
-
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):
         scoresNumpy[i] = scoreKeeper[STRATEGY_LIST[i]]
     rankings = np.argsort(scoresNumpy)
+    invRankings = [len(rankings) - int(ranking) - 1 for ranking in np.argsort(rankings)]
+
+    with open("viewer-template.html", "r+") as t:
+        jsonStrategies = [
+            {
+                "name": name,
+                "rank": rank,
+                "score": score,
+                "avgScore": score / (len(STRATEGY_LIST) - 1),
+            }
+            for (name, rank, score) in zip(STRATEGY_LIST, invRankings, scoresNumpy)
+        ]
+        jsonResults = json.dumps({"results": allResults, "strategies": jsonStrategies})
+        templateStr = t.read()
+        with open("results.html", "w+") as out:
+            out.write(templateStr.replace("$results", jsonResults))
 
     mainFile.write("\n\nTOTAL SCORES\n")
     for rank in range(len(STRATEGY_LIST)):
