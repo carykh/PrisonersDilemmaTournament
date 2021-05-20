@@ -33,7 +33,7 @@ STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo", "edward", "misc", 
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
 RESULTS_FILE = "results.txt"
-RESULTS_JSON = "results.json"
+RESULTS_HTML = "results.html"
 SUMMARY_FILE = "summary.txt"
 NUM_RUNS = args.num_runs
 
@@ -230,7 +230,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
         ]
         jsonResults = json.dumps({"results": allResults, "strategies": jsonStrategies})
         templateStr = t.read()
-        with open("results.html", "w+") as out:
+        with open(RESULTS_HTML, "w+") as out:
             out.write(templateStr.replace("$results", jsonResults))
 
     mainFile.write("\n\nTOTAL SCORES\n")
