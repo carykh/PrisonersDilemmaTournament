@@ -34,7 +34,7 @@ STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo", "edward", "misc", 
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
 RESULTS_FILE = "results.txt"
-RESULTS_JSON = "results.json"
+RESULTS_HTML = "results.html"
 SUMMARY_FILE = "summary.txt"
 NUM_RUNS = args.num_runs
 
@@ -108,18 +108,14 @@ def tallyRoundScores(history):
 
 
 def outputRoundResults(f, pair, roundHistory, scoresA, scoresB, stdevA, stdevB):
-    f.write(pair[0] + " (P1)  VS.  " + pair[1] + " (P2)\n")
+    f.write(f"{pair[0]} (P1)  VS.  {pair[1]} (P2)\n")
     for p in range(2):
         for t in range(roundHistory.shape[1]):
             move = roundHistory[p, t]
             f.write(moveLabels[move] + " ")
         f.write("\n")
-    f.write(
-        "Final score for " + pair[0] + ": " + str(scoresA) + " ± " + str(stdevA) + "\n"
-    )
-    f.write(
-        "Final score for " + pair[1] + ": " + str(scoresB) + " ± " + str(stdevB) + "\n"
-    )
+    f.write(f"Final score for {pair[0]}: {scoresA} ± {stdevA}\n")
+    f.write(f"Final score for {pair[1]}: {scoresB} ± {stdevB}\n")
     f.write("\n")
 
 
@@ -132,7 +128,7 @@ def pad(stri, leng):
 
 def progressBar(width, completion):
     numCompleted = round(width * completion)
-    return "[" + ("=" * numCompleted) + (" " * (width - numCompleted)) + "]"
+    return f"[{'=' * numCompleted}{' ' * (width - numCompleted)}]"
 
 
 def runRounds(pair):
@@ -167,7 +163,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     for inFolder in inFolders:
         for file in os.listdir(inFolder):
             if file.endswith(".py"):
-                STRATEGY_LIST.append(inFolder + "." + file[:-3])
+                STRATEGY_LIST.append(f"{inFolder}.{file[:-3]}")
 
     for strategy in STRATEGY_LIST:
         scoreKeeper[strategy] = 0
@@ -186,46 +182,60 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                 f"\r{i}/{numCombinations} pairings ({NUM_RUNS} runs per pairing) {progressBar(50, i / numCombinations)}"
             )
             sys.stdout.flush()
-            (avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr) = result[0]
+            (
+                avgScoreA,
+                avgScoreB,
+                stdevA,
+                stdevB,
+                firstRoundHistory,
+                roundResultsStr,
+            ) = result[0]
             (nameA, nameB) = result[1]
-            allResults.append({
-                'nameA': nameA,
-                'nameB': nameB,
-                'avgScoreA': avgScoreA,
-                'avgScoreB': avgScoreB,
-                'stdevA': stdevA,
-                'stdevB': stdevB,
-                'historyA': list(int(x) for x in firstRoundHistory[0]),
-                'historyB': list(int(x) for x in firstRoundHistory[1]),
-            })
+            allResults.append(
+                {
+                    "nameA": nameA,
+                    "nameB": nameB,
+                    "avgScoreA": avgScoreA,
+                    "avgScoreB": avgScoreB,
+                    "stdevA": stdevA,
+                    "stdevB": stdevB,
+                    "historyA": list(int(x) for x in firstRoundHistory[0]),
+                    "historyB": list(int(x) for x in firstRoundHistory[1]),
+                }
+            )
             mainFile.write(roundResultsStr)
             scoreKeeper[nameA] += avgScoreA
             scoreKeeper[nameB] += avgScoreB
     sys.stdout.write("\n")
     sys.stdout.flush()
 
-    with open(RESULTS_JSON, "w+") as j:
-        j.write(json.dumps(allResults))
-
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):
         scoresNumpy[i] = scoreKeeper[STRATEGY_LIST[i]]
     rankings = np.argsort(scoresNumpy)
+    invRankings = [len(rankings) - int(ranking) - 1 for ranking in np.argsort(rankings)]
+
+    with open("viewer-template.html", "r+") as t:
+        jsonStrategies = [
+            {
+                "name": name,
+                "rank": rank,
+                "score": score,
+                "avgScore": score / (len(STRATEGY_LIST) - 1),
+            }
+            for (name, rank, score) in zip(STRATEGY_LIST, invRankings, scoresNumpy)
+        ]
+        jsonResults = json.dumps({"results": allResults, "strategies": jsonStrategies})
+        templateStr = t.read()
+        with open(RESULTS_HTML, "w+") as out:
+            out.write(templateStr.replace("$results", jsonResults))
 
     mainFile.write("\n\nTOTAL SCORES\n")
     for rank in range(len(STRATEGY_LIST)):
         i = rankings[-1 - rank]
         score = scoresNumpy[i]
         scorePer = score / (len(STRATEGY_LIST) - 1)
-        scoreLine = (
-            "#"
-            + str(rank + 1)
-            + ": "
-            + pad(STRATEGY_LIST[i] + ":", 16)
-            + " %.3f" % score
-            + "  (%.3f" % scorePer
-            + " average)\n"
-        )
+        scoreLine = f"#{rank + 1}: {pad(STRATEGY_LIST[i] + ':', 16)}{score:.3f}  ({scorePer:.3f} average)\n"
         mainFile.write(scoreLine)
         summaryFile.write(scoreLine)
 
