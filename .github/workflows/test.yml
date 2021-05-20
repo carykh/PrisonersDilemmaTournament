@@ -19,9 +19,9 @@ jobs:
       - run: mkdir etc
       - run: python prisonersDilemma.py
       - id: summary
-        run: echo "::set-output name=file::$(cat summary.txt)"
+        run: echo "::set-output name=file::\"$(cat summary.txt)\""
       - id: results
-        run: echo "::set-output name=file::$(cat results.txt)"
+        run: echo "::set-output name=file::\"$(cat results.txt)\""
   publish:
     runs-on: ubuntu-latest
     needs: run
