@@ -107,18 +107,14 @@ def tallyRoundScores(history):
 
 
 def outputRoundResults(f, pair, roundHistory, scoresA, scoresB, stdevA, stdevB):
-    f.write(pair[0] + " (P1)  VS.  " + pair[1] + " (P2)\n")
+    f.write(f"{pair[0]} (P1)  VS.  {pair[1]} (P2)\n")
     for p in range(2):
         for t in range(roundHistory.shape[1]):
             move = roundHistory[p, t]
             f.write(moveLabels[move] + " ")
         f.write("\n")
-    f.write(
-        "Final score for " + pair[0] + ": " + str(scoresA) + " ± " + str(stdevA) + "\n"
-    )
-    f.write(
-        "Final score for " + pair[1] + ": " + str(scoresB) + " ± " + str(stdevB) + "\n"
-    )
+    f.write(f"Final score for {pair[0]}: {scoresA} ± {stdevA}\n")
+    f.write(f"Final score for {pair[1]}: {scoresB} ± {stdevB}\n")
     f.write("\n")
 
 
@@ -131,7 +127,7 @@ def pad(stri, leng):
 
 def progressBar(width, completion):
     numCompleted = round(width * completion)
-    return "[" + ("=" * numCompleted) + (" " * (width - numCompleted)) + "]"
+    return f"[{'=' * numCompleted}{' ' * (width - numCompleted)}]"
 
 
 def runRounds(pair):
@@ -166,7 +162,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     for inFolder in inFolders:
         for file in os.listdir(inFolder):
             if file.endswith(".py"):
-                STRATEGY_LIST.append(inFolder + "." + file[:-3])
+                STRATEGY_LIST.append(f"{inFolder}.{file[:-3]}")
 
     for strategy in STRATEGY_LIST:
         scoreKeeper[strategy] = 0
@@ -238,15 +234,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
         i = rankings[-1 - rank]
         score = scoresNumpy[i]
         scorePer = score / (len(STRATEGY_LIST) - 1)
-        scoreLine = (
-            "#"
-            + str(rank + 1)
-            + ": "
-            + pad(STRATEGY_LIST[i] + ":", 16)
-            + " %.3f" % score
-            + "  (%.3f" % scorePer
-            + " average)\n"
-        )
+        scoreLine = f"#{rank + 1}: {pad(STRATEGY_LIST[i] + ':', 16)}{score:.3f}  ({scorePer:.3f} average)\n"
         mainFile.write(scoreLine)
         summaryFile.write(scoreLine)
 
