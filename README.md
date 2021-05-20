@@ -1,3 +1,9 @@
+# PrisonersDilemmaTournament Community Fork
+
+This is a fork of PrisonersDilemmaTournament including improved runner and more strategies for better testing
+
+Original README is below.
+
 # PrisonersDilemmaTournament
 
 This is my CS 269i class project.
