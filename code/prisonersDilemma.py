@@ -18,6 +18,14 @@ parser.add_argument(
     help="Number of runs to average out",
 )
 
+parser.add_argument(
+    "--no-8ball",
+    dest="no_8ball",
+    action="store_true",
+    default=False,
+    help="Skip AAAAAAAA's 8-Ball for faster performance",
+)
+
 args = parser.parse_args()
 
 STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo", "etc"]
@@ -148,6 +156,8 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     STRATEGY_LIST = []
     for inFolder in inFolders:
         for file in os.listdir(inFolder):
+            if file == "AAAAAAAA_magic8Ball.py" and args.no_8ball:
+                continue
             if file.endswith(".py"):
                 STRATEGY_LIST.append(inFolder + "." + file[:-3])
 
