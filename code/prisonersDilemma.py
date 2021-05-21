@@ -3,7 +3,7 @@ import itertools
 import importlib
 import numpy as np
 import random
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from io import StringIO
 import statistics
 import argparse
@@ -34,6 +34,16 @@ parser.add_argument(
     nargs="+",
     help="If passed, only these strategies will be tested against each other. If only a single strategy is passed, every other strategy will be paired against it.",
 )
+
+parser.add_argument(
+    "-j",
+    "--num-processes",
+    dest="processes",
+    type=int,
+    default=cpu_count(),
+    help="Number of processes to run the simulation with. By default, this is the same as your CPU core count.",
+)
+
 
 args = parser.parse_args()
 
@@ -202,7 +212,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
 
     numCombinations = len(combinations)
     allResults = []
-    with Pool() as p:
+    with Pool(args.processes) as p:
         for i, result in enumerate(
             zip(p.imap(runRounds, combinations), combinations), 1
         ):
