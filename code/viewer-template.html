@@ -132,6 +132,27 @@
 
             const {results, strategies} = $results;
 
+            const storageVersion = localStorage.getItem('version');
+            if (storageVersion !== '1') {
+                localStorage.clear();
+                localStorage.setItem('version', '1');
+            }
+
+            const enableViewStrategy = localStorage.getItem('enableViewStrategy') !== 'false';
+            let viewedStrategy = localStorage.getItem('viewedStrategy');
+            if (!viewedStrategy || !strategies.some(strategy => strategy.name === viewedStrategy)) {
+                let bestStrategy = null;
+                let bestStrategyScore = -Infinity;
+                for (const strategy of strategies) {
+                    if (strategy.score > bestStrategyScore) {
+                        bestStrategy = strategy;
+                        bestStrategyScore = strategy.score;
+                    }
+                }
+                viewedStrategy = bestStrategy.name;
+            }
+            const sortOrder = localStorage.getItem('sortOrder') || 'run-order';
+
             const historyToTableCells = history => history.map(action => html`<td class="${action === 0 ? 'defect' : 'cooperate'}" />`)
 
             const Result = ({playerA, playerB}) => html`
@@ -157,9 +178,9 @@
                     super(props);
 
                     this.state = {
-                        enableViewStrategy: false,
-                        viewedStrategy: null,
-                        sortOrder: 'run-order'
+                        enableViewStrategy,
+                        viewedStrategy,
+                        sortOrder
                     }
 
                     this.onSetEnableViewStrategy = this.onSetEnableViewStrategy.bind(this);
@@ -171,14 +192,17 @@
 
                 onSetEnableViewStrategy (event) {
                     this.setState({enableViewStrategy: event.target.checked});
+                    localStorage.setItem('enableViewStrategy', JSON.stringify(event.target.checked));
                 }
 
                 onSetViewedStrategy (event) {
                     this.setState({viewedStrategy: event.target.value});
+                    localStorage.setItem('viewedStrategy', event.target.value);
                 }
 
                 onSetSortOrder (sortOrder) {
                     this.setState({sortOrder});
+                    localStorage.setItem('sortOrder', sortOrder);
                 }
 
                 render () {
@@ -198,7 +222,7 @@
                     return html`
                             <div class="results">
                                 <div class="controls">
-                                    <label><input type="checkbox" value=${this.state.enableViewStrategy} onChange=${this.onSetEnableViewStrategy} /> FILTER: </label>
+                                    <label><input type="checkbox" checked=${this.state.enableViewStrategy} onChange=${this.onSetEnableViewStrategy} /> FILTER: </label>
                                     <select disabled=${!this.state.enableViewStrategy} onInput=${this.onSetViewedStrategy} value=${this.state.viewedStrategy}>
                                         ${strategies.map(strategy => html`<option value=${strategy.name}>${strategy.name}</option>`)}
                                     </select>
