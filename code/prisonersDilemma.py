@@ -27,6 +27,14 @@ parser.add_argument(
     help="Skip slow strategies for better performance",
 )
 
+parser.add_argument(
+    "-s",
+    "--strategies",
+    dest="strategies",
+    nargs="+",
+    help="If passed, only these strategies will be tested against each other",
+)
+
 args = parser.parse_args()
 
 STRATEGY_FOLDERS = [
@@ -171,6 +179,12 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
         for file in os.listdir(inFolder):
             if file.endswith(".py"):
                 STRATEGY_LIST.append(f"{inFolder}.{file[:-3]}")
+    
+    if args.strategies is not None:
+        STRATEGY_LIST = [strategy for strategy in STRATEGY_LIST if strategy in args.strategies]
+    
+    if len(STRATEGY_LIST) < 2:
+        raise ValueError('Not enough strategies!')
 
     for strategy in STRATEGY_LIST:
         scoreKeeper[strategy] = 0
