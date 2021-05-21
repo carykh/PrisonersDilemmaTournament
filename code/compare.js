@@ -1,5 +1,28 @@
-const names = ['FallenAngel', 'FallenAngel2', 'Priest', 'AngryPriest'];
-const COLSIZE = 30;
+let names = ['FallenAngel', 'FallenAngel2', 'Priest', 'AngryPriest'];
+let COLSIZE = 30;
+
+let customNames = false;
+
+for(let i=0;i<process.argv.length;i++){
+  if(
+    process.argv[i].indexOf('-w=')==0 ||
+    process.argv[i].indexOf('-width=')==0 ||
+    process.argv[i].indexOf('--width=')==0
+  ){
+    COLSIZE = parseInt(process.argv[i].replace('--width=','').replace('-width=','').replace('-w=',''));
+  }
+  if(i > 1 &&
+    process.argv[i].indexOf('-')<0 &&
+    process.argv[i].indexOf('/')<0 &&
+    process.argv[i].indexOf('\\')<0
+  ){
+    if(!customNames){
+      customNames = true;
+      names = [];
+    }
+    names.push(process.argv[i]);
+  }
+}
 
 const data = require('./results.json');
 
