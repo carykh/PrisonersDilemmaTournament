@@ -33,7 +33,7 @@ def strategyMove(move):
         defects = ["defect","tell truth"]
         return 0 if (move in defects) else 1
     else:
-        return move
+        return int(bool(move))
 
 def runRound(pair):
     moduleA = importlib.import_module(STRATEGY_FOLDER+"."+pair[0])
