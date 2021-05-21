@@ -134,19 +134,19 @@
 
             const historyToTableCells = history => history.map(action => html`<td class="${action === 0 ? 'defect' : 'cooperate'}" />`)
 
-            const Result = ({result}) => html`
+            const Result = ({playerA, playerB}) => html`
                 <div class="result">
-                    <h4>${result.playerA.name} vs ${result.playerB.name}</h4>
+                    <h4>${playerA.name} vs ${playerB.name}</h4>
                     <table class="history">
                         <tr>
-                            <th class="round-strategy">${result.playerA.name}</th>
-                            <td class="round-score">${result.playerA.avgScore.toFixed(3)} ± ${result.playerA.stdev.toFixed(3)}</td>
-                            ${historyToTableCells(result.playerA.history)}
+                            <th class="round-strategy">${playerA.name}</th>
+                            <td class="round-score">${playerA.avgScore.toFixed(3)} ± ${playerA.stdev.toFixed(3)}</td>
+                            ${historyToTableCells(playerA.history)}
                         </tr>
                         <tr>
-                            <th class="round-strategy">${result.playerB.name}</th>
-                            <td class="round-score">${result.playerB.avgScore.toFixed(3)} ± ${result.playerB.stdev.toFixed(3)}</td>
-                            ${historyToTableCells(result.playerB.history)}
+                            <th class="round-strategy">${playerB.name}</th>
+                            <td class="round-score">${playerB.avgScore.toFixed(3)} ± ${playerB.stdev.toFixed(3)}</td>
+                            ${historyToTableCells(playerB.history)}
                         </tr>
                     </table>
                 </div>
@@ -182,7 +182,8 @@
                 }
 
                 render () {
-                    const filteredResults = this.state.enableViewStrategy && strategies.some(strategy => strategy.name === this.state.viewedStrategy) ?
+                    const viewedStrategyExists = this.state.enableViewStrategy && strategies.some(strategy => strategy.name === this.state.viewedStrategy);
+                    const filteredResults = viewedStrategyExists ?
                         results
                             .filter(result => 
                                 result.playerA.name === this.state.viewedStrategy ||
@@ -225,7 +226,11 @@
                                     />Opponent score </label>
                                 </div>
                                 <div class="results-container">
-                                    ${filteredResults.map(result => html`<${Result} result=${result} key=${result.playerA.name + '_' + result.playerB.name} />`)}
+                                    ${filteredResults.map(result => html`<${Result}
+                                        playerA=${viewedStrategyExists && this.state.viewedStrategy === result.playerB.name ? result.playerB : result.playerA}
+                                        playerB=${viewedStrategyExists && this.state.viewedStrategy === result.playerB.name ? result.playerA : result.playerB}
+                                        key=${result.playerA.name + '_' + result.playerB.name}
+                                    />`)}
                                 </div>
                             </div>
                     `;
