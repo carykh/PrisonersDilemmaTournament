@@ -48,6 +48,8 @@ jobs:
     steps:
       - env:
             DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
+            DISCORD_USERNAME: Autotester
+            DISCORD_AVATAR: https://cdn.discordapp.com/icons/844706669455343616/e1075eb0f262c1df130e1156dc59b39b.png?size=4096
         uses: Ilshidur/action-discord@master
         with:
             args: ${{ needs.run.outputs.summary }}
