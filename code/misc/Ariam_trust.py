@@ -1,6 +1,7 @@
 import numpy as np
 import random
 
+
 def strategy(history, memory):
     choice = None
     if history.shape[1] == 0:

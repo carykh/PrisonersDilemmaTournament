@@ -3,48 +3,117 @@
     <head>
         <title>Prisoner's Dilemma Viewer</title>
         <meta charset="utf-8">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
         <style>
             html, body {
                 width: 100%;
+                height: 100%;
                 font-family: sans-serif;
             }
 
             body {
-                margin: 1em 0;
+                font-family: 'Roboto Mono', monospace;
+                color: #f7f1ff;
+                background-color: #222222;
+                display: flex;
+                margin: 0;
+            }
+
+            h4 {
+                font-weight: normal;
+                color: #8b888f;
+                margin: 0;
             }
 
             #container {
-                margin: 0 5em;
+                margin: 0 1em;
+                display: flex;
             }
 
-            .controls {
-                margin-top: 2em;
+            .scoreboard-container {
+                overflow: auto;
+                flex: 1 0 auto;
             }
 
             .scoreboard {
                 border-spacing: 0;
+                border: none;
                 border-collapse: collapse;
+                padding-right: 1em;
             }
 
             .scoreboard tr:nth-child(even) {
-                background-color: #eee;
+                background-color: #191919
             }
 
             .scoreboard td {
-                border: 1px solid #ccc;
-                padding: 0.125em 1em;
+                padding: 0.1em .7em;
+            }
+            
+            .rank {
+                color: #8b888f;
+            }
+
+            .avg-score {
+                color: #42d4e6;
+                text-align: right;
+            }
+
+            .results {
+                width:100%;
+                text-align: left;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .controls {
+                padding: 1em 0.5em;
+                flex: 1 0 auto;
+            }
+
+            .results-container {
+                overflow: auto;
+                flex: 0 1 auto;
+                background-color: #191919;
+            }
+
+            .result {
+                margin: 0 0.5em 1em 0.5em;
+            }
+
+            .result:first-child {
+                margin-top: 1em;
+            }
+
+            .winner {
+                color: yellow;
+                font-style: italic;
             }
 
             .history {
                 border-spacing: 1px;
+                border-collapse: collapse;
+                margin: 0 2em;
             }
             
             .history th {
-                text-align: right;
+                text-align: left;
             }
 
             .round-score, .round-strategy {
                 white-space: nowrap;
+            }
+
+            .round-strategy {
+                width: 25em;
+                overflow-x: hidden;
+            }
+
+            .round-score {
+                font-style: italic;
+                text-align: right;
+                padding-right: 2em;
             }
 
             .defect, .cooperate {
@@ -53,11 +122,11 @@
             }
 
             .defect {
-                background-color: #D32F2F;
+                background-color: #e23030;
             }
 
             .cooperate {
-                background-color: #689F38;
+                background-color: #213a2c;
             }
         </style>
     </head>
@@ -72,7 +141,7 @@
 
             const Result = ({result}) => html`
                 <div class="result">
-                    <h3>${result.nameA} vs ${result.nameB}</h3>
+                    <h4>${result.nameA} vs ${result.nameB} (<span class="winner">${result.winner}</span>)</h4>
                     <table class="history">
                         <tr>
                             <th class="round-strategy">${result.nameA}</th>
@@ -114,45 +183,47 @@
                         results.filter(result => result.nameA === this.state.viewedStrategy || result.nameB === this.state.viewedStrategy) :
                         results;
                     return html`
-                            <div class="controls">
-                                <label><input type="checkbox" value=${this.state.enableViewStrategy} onChange=${this.onSetEnableViewStrategy} /> Limit results to strategy: </label>
-                                <select disabled=${!this.state.enableViewStrategy} onInput=${this.onSetViewedStrategy} value=${this.state.viewedStrategy}>
-                                    ${strategies.map(strategy => html`<option value=${strategy.name}>${strategy.name}</option>`)}
-                                </select>
-                            </div>
                             <div class="results">
-                                ${filteredResults.map(result => html`<${Result} result=${result} key=${result.nameA + '_' + result.nameB} />`)}
+                                <div class="controls">
+                                    <label><input type="checkbox" value=${this.state.enableViewStrategy} onChange=${this.onSetEnableViewStrategy} /> FILTER: </label>
+                                    <select disabled=${!this.state.enableViewStrategy} onInput=${this.onSetViewedStrategy} value=${this.state.viewedStrategy}>
+                                        ${strategies.map(strategy => html`<option value=${strategy.name}>${strategy.name}</option>`)}
+                                    </select>
+                                </div>
+                                <div class="results-container">
+                                    ${filteredResults.map(result => html`<${Result} result=${result} key=${result.nameA + '_' + result.nameB} />`)}
+                                </div>
                             </div>
                     `;
                 }
             }
 
             const Scoreboard = () => html`
-                <table class="scoreboard">
-                    <thead>
-                        <tr>
-                            <td>Rank</td>
-                            <td>Strategy</td>
-                            <td>Score</td>
-                            <td>Score (avg)</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${strategies.slice(0).sort((a, b) => a.rank - b.rank).map(strategy => html`
+                <div class="scoreboard-container">
+                    <table class="scoreboard">
+                        <thead>
                             <tr>
-                                <td>${strategy.rank + 1}</td>
-                                <td>${strategy.name}</td>
-                                <td>${strategy.score.toFixed(3)}</td>
-                                <td>${strategy.avgScore.toFixed(3)}</td>
+                                <td>Rank</td>
+                                <td>Strategy</td>
+                                <td>Score</td>
+                                <td>Avg</td>
                             </tr>
-                        `)}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            ${strategies.slice(0).sort((a, b) => a.rank - b.rank).map(strategy => html`
+                                <tr>
+                                    <td class="rank">${strategy.rank + 1}</td>
+                                    <td>${strategy.name}</td>
+                                    <td>${strategy.score.toFixed(3)}</td>
+                                    <td class="avg-score">${strategy.avgScore.toFixed(3)}</td>
+                                </tr>
+                            `)}
+                        </tbody>
+                    </table>
+                </div>
             `
 
             render(html`<${Scoreboard} /><${ResultsView} />`, document.getElementById('container'));
-
-            console.log(results, strategies);
         </script>
     </body>
 </html>

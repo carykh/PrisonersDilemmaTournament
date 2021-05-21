@@ -29,7 +29,15 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo", "edward", "misc", "saffron"]
+STRATEGY_FOLDERS = [
+    "exampleStrats",
+    "valadaptive",
+    "nekiwo",
+    "edward",
+    "misc",
+    "saffron",
+    "aaaa-trsh",
+]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
 RESULTS_FILE = "results.txt"
@@ -190,6 +198,8 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                 roundResultsStr,
             ) = result[0]
             (nameA, nameB) = result[1]
+            scoresList = [avgScoreA, avgScoreB]
+
             allResults.append(
                 {
                     "nameA": nameA,
@@ -200,6 +210,11 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                     "stdevB": stdevB,
                     "historyA": list(int(x) for x in firstRoundHistory[0]),
                     "historyB": list(int(x) for x in firstRoundHistory[1]),
+                    "winner": (
+                        (nameA, nameB)[scoresList.index(max(scoresList))] + " won"
+                    )
+                    if avgScoreA != avgScoreB
+                    else "tie!",
                 }
             )
             mainFile.write(roundResultsStr)
