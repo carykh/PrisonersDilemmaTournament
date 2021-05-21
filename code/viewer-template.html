@@ -158,11 +158,15 @@
 
                     this.state = {
                         enableViewStrategy: false,
-                        viewedStrategy: null
+                        viewedStrategy: null,
+                        sortOrder: 'run-order'
                     }
 
                     this.onSetEnableViewStrategy = this.onSetEnableViewStrategy.bind(this);
                     this.onSetViewedStrategy = this.onSetViewedStrategy.bind(this);
+                    this.onSetSortOrderRunOrder = this.onSetSortOrder.bind(this, 'run-order');
+                    this.onSetSortOrderMyScore = this.onSetSortOrder.bind(this, 'my-score');
+                    this.onSetSortOrderOpponentScore = this.onSetSortOrder.bind(this, 'opponent-score');
                 }
 
                 onSetEnableViewStrategy (event) {
@@ -173,9 +177,22 @@
                     this.setState({viewedStrategy: event.target.value});
                 }
 
+                onSetSortOrder (sortOrder) {
+                    this.setState({sortOrder});
+                }
+
                 render () {
                     const filteredResults = this.state.enableViewStrategy && strategies.some(strategy => strategy.name === this.state.viewedStrategy) ?
-                        results.filter(result => result.nameA === this.state.viewedStrategy || result.nameB === this.state.viewedStrategy) :
+                        results
+                            .filter(result => 
+                                result.nameA === this.state.viewedStrategy ||
+                                result.nameB === this.state.viewedStrategy
+                            ).sort((first, second) => {
+                                if (this.state.sortOrder === 'run-order') return 0;
+                                const firstScore = (((first.nameA === this.state.viewedStrategy) ^ (this.state.sortOrder === 'opponent-score')) ? first.avgScoreA : first.avgScoreB);
+                                const secondScore = (((second.nameA === this.state.viewedStrategy) ^ (this.state.sortOrder === 'opponent-score')) ? second.avgScoreA : second.avgScoreB);
+                                return secondScore - firstScore;
+                            }) :
                         results;
                     return html`
                             <div class="results">
@@ -184,6 +201,28 @@
                                     <select disabled=${!this.state.enableViewStrategy} onInput=${this.onSetViewedStrategy} value=${this.state.viewedStrategy}>
                                         ${strategies.map(strategy => html`<option value=${strategy.name}>${strategy.name}</option>`)}
                                     </select>
+                                    <span> SORT BY: </span>
+                                    <label><input
+                                        type="radio"
+                                        value="run-order"
+                                        checked=${this.state.sortOrder === 'run-order'}
+                                        onInput=${this.onSetSortOrderRunOrder}
+                                        disabled=${!this.state.enableViewStrategy}
+                                    />Run order </label>
+                                    <label><input
+                                        type="radio"
+                                        value="my-score"
+                                        checked=${this.state.sortOrder === 'my-score'}
+                                        onInput=${this.onSetSortOrderMyScore}
+                                        disabled=${!this.state.enableViewStrategy}
+                                    />My score </label>
+                                    <label><input
+                                        type="radio"
+                                        value="opponent-score"
+                                        checked=${this.state.sortOrder === 'opponent-score'}
+                                        onInput=${this.onSetSortOrderOpponentScore}
+                                        disabled=${!this.state.enableViewStrategy}
+                                    />Opponent score </label>
                                 </div>
                                 <div class="results-container">
                                     ${filteredResults.map(result => html`<${Result} result=${result} key=${result.nameA + '_' + result.nameB} />`)}
