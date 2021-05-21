@@ -136,17 +136,17 @@
 
             const Result = ({result}) => html`
                 <div class="result">
-                    <h4>${result.nameA} vs ${result.nameB}</h4>
+                    <h4>${result.playerA.name} vs ${result.playerB.name}</h4>
                     <table class="history">
                         <tr>
-                            <th class="round-strategy">${result.nameA}</th>
-                            <td class="round-score">${result.avgScoreA.toFixed(3)} ± ${result.stdevA.toFixed(3)}</td>
-                            ${historyToTableCells(result.historyA)}
+                            <th class="round-strategy">${result.playerA.name}</th>
+                            <td class="round-score">${result.playerA.avgScore.toFixed(3)} ± ${result.playerA.stdev.toFixed(3)}</td>
+                            ${historyToTableCells(result.playerA.history)}
                         </tr>
                         <tr>
-                            <th class="round-strategy">${result.nameB}</th>
-                            <td class="round-score">${result.avgScoreB.toFixed(3)} ± ${result.stdevB.toFixed(3)}</td>
-                            ${historyToTableCells(result.historyB)}
+                            <th class="round-strategy">${result.playerB.name}</th>
+                            <td class="round-score">${result.playerB.avgScore.toFixed(3)} ± ${result.playerB.stdev.toFixed(3)}</td>
+                            ${historyToTableCells(result.playerB.history)}
                         </tr>
                     </table>
                 </div>
@@ -185,12 +185,12 @@
                     const filteredResults = this.state.enableViewStrategy && strategies.some(strategy => strategy.name === this.state.viewedStrategy) ?
                         results
                             .filter(result => 
-                                result.nameA === this.state.viewedStrategy ||
-                                result.nameB === this.state.viewedStrategy
+                                result.playerA.name === this.state.viewedStrategy ||
+                                result.playerB.name === this.state.viewedStrategy
                             ).sort((first, second) => {
                                 if (this.state.sortOrder === 'run-order') return 0;
-                                const firstScore = (((first.nameA === this.state.viewedStrategy) ^ (this.state.sortOrder === 'opponent-score')) ? first.avgScoreA : first.avgScoreB);
-                                const secondScore = (((second.nameA === this.state.viewedStrategy) ^ (this.state.sortOrder === 'opponent-score')) ? second.avgScoreA : second.avgScoreB);
+                                const firstScore = (((first.playerA.name === this.state.viewedStrategy) ^ (this.state.sortOrder === 'opponent-score')) ? first.playerA.avgScore : first.playerB.avgScore);
+                                const secondScore = (((second.playerA.name === this.state.viewedStrategy) ^ (this.state.sortOrder === 'opponent-score')) ? second.playerA.avgScore : second.playerB.avgScore);
                                 return secondScore - firstScore;
                             }) :
                         results;
@@ -225,7 +225,7 @@
                                     />Opponent score </label>
                                 </div>
                                 <div class="results-container">
-                                    ${filteredResults.map(result => html`<${Result} result=${result} key=${result.nameA + '_' + result.nameB} />`)}
+                                    ${filteredResults.map(result => html`<${Result} result=${result} key=${result.playerA.name + '_' + result.playerB.name} />`)}
                                 </div>
                             </div>
                     `;

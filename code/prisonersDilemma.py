@@ -216,14 +216,18 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
 
             allResults.append(
                 {
-                    "nameA": nameA,
-                    "nameB": nameB,
-                    "avgScoreA": avgScoreA,
-                    "avgScoreB": avgScoreB,
-                    "stdevA": stdevA,
-                    "stdevB": stdevB,
-                    "historyA": list(int(x) for x in firstRoundHistory[0]),
-                    "historyB": list(int(x) for x in firstRoundHistory[1])
+                    "playerA": {
+                        "name": nameA,
+                        "avgScore": avgScoreA,
+                        "stdev": stdevA,
+                        "history": list(int(x) for x in firstRoundHistory[0])
+                    },
+                    "playerB": {
+                        "name": nameB,
+                        "avgScore": avgScoreB,
+                        "stdev": stdevB,
+                        "history": list(int(x) for x in firstRoundHistory[1])
+                    }
                 }
             )
             mainFile.write(roundResultsStr)
