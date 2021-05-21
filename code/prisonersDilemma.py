@@ -105,7 +105,7 @@ def insertIntoNestedDict(nestedDict, keyA, keyB, value):
     nestedDict[keyA][keyB] = value
 
 
-def runFullPairingTournament(inFolder, outFile):
+def runFullPairingTournament(inFolder, outFile, h2hFile):
     print("Starting tournament, reading files from " + inFolder)
     scoreKeeper = {}
     headToHead = {}
@@ -151,7 +151,7 @@ def runFullPairingTournament(inFolder, outFile):
     f.close()
     print("Done with results tallying! Results file written to " + RESULTS_FILE)
 
-    with open(H2H_FILE, "w", newline="") as csvfile:
+    with open(h2hFile, "w", newline="") as csvfile:
         h2hwriter = csv.writer(csvfile)  # defaults to Excel dialect
         h2hwriter.writerow(
             [
@@ -166,7 +166,7 @@ def runFullPairingTournament(inFolder, outFile):
             for otherStrategy in STRATEGY_LIST:
                 row.append(str(headToHead.get(strategy, dict()).get(otherStrategy, "")))
             h2hwriter.writerow(row)
-    print("Done with head-to-head results-tracking! CSV written to " + H2H_FILE)
+    print("Done with head-to-head results-tracking! CSV written to " + h2hFile)
 
 
-runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
+runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE, H2H_FILE)
