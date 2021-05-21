@@ -34,7 +34,7 @@ def strategy(history, memory):
     # print(choice)
     # print("===========")
 
-    if random.random() < 0.10:
+    if history.shape[1] % 20 < 2:
         choice = 1
 
     # print(opponentHistory)
