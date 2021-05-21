@@ -114,13 +114,14 @@ def pad(stri, leng):
         result = result+" "
     return result
     
-def fetch_strategy(inFolder):
+def fetch_strategy(inFolder, exceptStrategy=None):
     script_path = pathlib.Path(__file__).parent.absolute()
 
     STRATEGY_LIST = []
     for file in os.listdir(os.path.join(script_path, inFolder)):
-        if file.endswith(".py"):
+        if file.endswith(".py") and file not in exceptStrategy:
             STRATEGY_LIST.append(file[:-3])
+
     return STRATEGY_LIST
 
 def runFullPairingTournament(inFolder, outFile):
