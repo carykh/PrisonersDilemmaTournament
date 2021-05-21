@@ -46,12 +46,13 @@ STRATEGY_FOLDERS = [
     "saffron",
     "aaaa-trsh",
     "phoenix",
-    "l4vr0v"
+    "I4vr0v"
 ]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
 RESULTS_FILE = "results.txt"
 RESULTS_HTML = "results.html"
+RESULTS_JSON = "results.json"
 SUMMARY_FILE = "summary.txt"
 NUM_RUNS = args.num_runs
 
@@ -181,10 +182,10 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
         for file in os.listdir(inFolder):
             if file.endswith(".py"):
                 STRATEGY_LIST.append(f"{inFolder}.{file[:-3]}")
-    
+
     if args.strategies is not None:
         STRATEGY_LIST = [strategy for strategy in STRATEGY_LIST if strategy in args.strategies]
-    
+
     if len(STRATEGY_LIST) < 2:
         raise ValueError('Not enough strategies!')
 
@@ -237,6 +238,9 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
             scoreKeeper[nameB] += avgScoreB
     sys.stdout.write("\n")
     sys.stdout.flush()
+
+    with open(RESULTS_JSON, "w+") as j:
+        j.write(json.dumps(allResults))
 
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):

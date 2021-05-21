@@ -4,8 +4,11 @@ const COLSIZE = 30;
 const data = require('./results.json');
 
 for (let i in data) {
-  data[i].nameA = data[i].nameA.replace(/[a-zA-Z0-9]+\./, '');
-  data[i].nameB = data[i].nameB.replace(/[a-zA-Z0-9]+\./, '');
+  data[i].playerA.name = data[i].playerA.name.replace(/[a-zA-Z0-9]+\./, '');
+  data[i].playerB.name = data[i].playerB.name.replace(/[a-zA-Z0-9]+\./, '');
+
+  //console.log(data[i].playerA.name);
+  //console.log(data[i].playerB.name);
 }
 
 function standardDeviation(a) {
@@ -25,26 +28,26 @@ function compare(data, names) {
   let participants = [];
   let participantStuff = {};
   for (let i in data) {
-    if (names.indexOf(data[i].nameA) >= 0) {
+    if (names.indexOf(data[i].playerA.name) >= 0) {
       relevant.push(data[i]);
-      if (participants.indexOf(data[i].nameB) < 0) {
-        participants.push(data[i].nameB);
-        participantStuff[data[i].nameB] = {};
+      if (participants.indexOf(data[i].playerB.name) < 0) {
+        participants.push(data[i].playerB.name);
+        participantStuff[data[i].playerB.name] = {};
       }
-      participantStuff[data[i].nameB][data[i].nameA]=data[i].avgScoreA;
+      participantStuff[data[i].playerB.name][data[i].playerA.name]=data[i].playerA.avgScore;
     }
-    if (names.indexOf(data[i].nameB) >= 0) {
+    if (names.indexOf(data[i].playerB.name) >= 0) {
       relevant.push(data[i]);
-      if (participants.indexOf(data[i].nameA) < 0) {
-        participants.push(data[i].nameA);
-        participantStuff[data[i].nameA] = {};
+      if (participants.indexOf(data[i].playerA.name) < 0) {
+        participants.push(data[i].playerA.name);
+        participantStuff[data[i].playerA.name] = {};
       }
-      participantStuff[data[i].nameA][data[i].nameB]=data[i].avgScoreB;
+      participantStuff[data[i].playerA.name][data[i].playerB.name]=data[i].playerB.avgScore;
     }
   }
 
   for(let i in names){
-    //participants.splice(participants.indexOf(names[i]),1);
+    participants.splice(participants.indexOf(names[i]),1);
   }
 
   function mapParticipants(a) {
