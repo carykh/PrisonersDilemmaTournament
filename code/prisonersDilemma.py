@@ -114,7 +114,7 @@ def pad(stri, leng):
         result = result+" "
     return result
     
-def fetch_strategy(inFolder, exceptStrategy=None):
+def fetch_strategy(inFolder, exceptStrategy=[]):
     script_path = pathlib.Path(__file__).parent.absolute()
 
     STRATEGY_LIST = []
