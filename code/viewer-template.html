@@ -86,11 +86,6 @@
                 margin-top: 1em;
             }
 
-            .winner {
-                color: yellow;
-                font-style: italic;
-            }
-
             .history {
                 border-spacing: 1px;
                 border-collapse: collapse;
@@ -141,7 +136,7 @@
 
             const Result = ({result}) => html`
                 <div class="result">
-                    <h4>${result.nameA} vs ${result.nameB} (<span class="winner">${result.winner}</span>)</h4>
+                    <h4>${result.nameA} vs ${result.nameB}</h4>
                     <table class="history">
                         <tr>
                             <th class="round-strategy">${result.nameA}</th>

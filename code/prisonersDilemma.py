@@ -223,12 +223,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                     "stdevA": stdevA,
                     "stdevB": stdevB,
                     "historyA": list(int(x) for x in firstRoundHistory[0]),
-                    "historyB": list(int(x) for x in firstRoundHistory[1]),
-                    "winner": (
-                        (nameA, nameB)[scoresList.index(max(scoresList))] + " won"
-                    )
-                    if avgScoreA != avgScoreB
-                    else "tie!",
+                    "historyB": list(int(x) for x in firstRoundHistory[1])
                 }
             )
             mainFile.write(roundResultsStr)
