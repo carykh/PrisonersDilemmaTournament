@@ -13,6 +13,13 @@ Nicky Case's "The Evolution of Trust" is also super fascinating, but it's not ne
 How this works:
 When you run code/prisonersDilemma.py, it will search through all the Python strategy files in code/exampleStrats. Then, it will simulate "Iterated Prisoner's Dilemma" with every possible pairing. (There are (n choose 2) pairings.) After all simulations are done, it will average each strategies' overall score. It will then produce a leaderboard of strategies based on their average performance, and save it to results.txt.
 
+It will also produce headToHead.csv, which tracks the head-to-head performance
+of every strategy against every other strategy. You can import it to Google
+Sheets or Excel and use it to compare how well your strategies score points
+against other strategies. This may be especially useful if you are testing with
+many strategies and do not want to parse results.txt to understand what's
+driving their different performances and defining your meta.
+
 If you'd like to add your own strategy, all you have to do is create a new .py file in the code/exampleStrats folder that follows the same format as the others. Then, when you run code/prisonersDilemma.py, it should automatically include your strategy into the tournament!
 
 # Details
