@@ -27,9 +27,25 @@ parser.add_argument(
     help="Skip slow strategies for better performance",
 )
 
+parser.add_argument(
+    "-s",
+    "--strategies",
+    dest="strategies",
+    nargs="+",
+    help="If passed, only these strategies will be tested against each other",
+)
+
 args = parser.parse_args()
 
-STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo", "edward", "misc", "saffron"]
+STRATEGY_FOLDERS = [
+    "exampleStrats",
+    "valadaptive",
+    "nekiwo",
+    "edward",
+    "misc",
+    "saffron",
+    "aaaa-trsh",
+]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
 RESULTS_FILE = "results.txt"
@@ -144,8 +160,8 @@ def runRounds(pair):
         allScoresB.append(scoresB)
     avgScoreA = statistics.mean(allScoresA)
     avgScoreB = statistics.mean(allScoresB)
-    stdevA = statistics.stdev(allScoresA)
-    stdevB = statistics.stdev(allScoresB)
+    stdevA = statistics.stdev(allScoresA) if len(allScoresA) > 1 else 0
+    stdevB = statistics.stdev(allScoresB) if len(allScoresB) > 1 else 0
     outputRoundResults(
         roundResults, pair, firstRoundHistory, scoresA, scoresB, stdevA, stdevB
     )
@@ -163,6 +179,12 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
         for file in os.listdir(inFolder):
             if file.endswith(".py"):
                 STRATEGY_LIST.append(f"{inFolder}.{file[:-3]}")
+    
+    if args.strategies is not None:
+        STRATEGY_LIST = [strategy for strategy in STRATEGY_LIST if strategy in args.strategies]
+    
+    if len(STRATEGY_LIST) < 2:
+        raise ValueError('Not enough strategies!')
 
     for strategy in STRATEGY_LIST:
         scoreKeeper[strategy] = 0
@@ -190,16 +212,22 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                 roundResultsStr,
             ) = result[0]
             (nameA, nameB) = result[1]
+            scoresList = [avgScoreA, avgScoreB]
+
             allResults.append(
                 {
-                    "nameA": nameA,
-                    "nameB": nameB,
-                    "avgScoreA": avgScoreA,
-                    "avgScoreB": avgScoreB,
-                    "stdevA": stdevA,
-                    "stdevB": stdevB,
-                    "historyA": list(int(x) for x in firstRoundHistory[0]),
-                    "historyB": list(int(x) for x in firstRoundHistory[1]),
+                    "playerA": {
+                        "name": nameA,
+                        "avgScore": avgScoreA,
+                        "stdev": stdevA,
+                        "history": list(int(x) for x in firstRoundHistory[0])
+                    },
+                    "playerB": {
+                        "name": nameB,
+                        "avgScore": avgScoreB,
+                        "stdev": stdevB,
+                        "history": list(int(x) for x in firstRoundHistory[1])
+                    }
                 }
             )
             mainFile.write(roundResultsStr)
