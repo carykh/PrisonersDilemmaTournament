@@ -124,9 +124,9 @@ def fetch_strategy(inFolder, exceptStrategy=[]):
 
     return STRATEGY_LIST
 
-def runFullPairingTournament(inFolder, outFile):
+def runFullPairingTournament(inFolder, outFile, exceptStrategy=[]):
     print("Starting tournament, reading files from "+inFolder)
-    STRATEGY_LIST = fetch_strategy(inFolder)
+    STRATEGY_LIST = fetch_strategy(inFolder, exceptStrategy=exceptStrategy)
 
     scoreKeeper = {}
     for strategy in STRATEGY_LIST:
@@ -184,7 +184,8 @@ if __name__ == "__main__":
 
     ## FULL PAIRING TOURNAMENT:
     RESULTS_FILE = "results.txt"
-    runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
+    EXCEPT_STRATEGY = []
+    runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE, EXCEPT_STRATEGY)
     print("Done with everything! Results file written to "+RESULTS_FILE)
 
     ## SINGLE PAIRING TOURNAMENT:
