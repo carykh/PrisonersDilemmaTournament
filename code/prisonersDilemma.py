@@ -32,7 +32,7 @@ parser.add_argument(
     "--strategies",
     dest="strategies",
     nargs="+",
-    help="If passed, only these strategies will be tested against each other",
+    help="If passed, only these strategies will be tested against each other. If only a single strategy is passed, every other strategy will be paired against it.",
 )
 
 args = parser.parse_args()
@@ -182,8 +182,8 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
         for file in os.listdir(inFolder):
             if file.endswith(".py"):
                 STRATEGY_LIST.append(f"{inFolder}.{file[:-3]}")
-
-    if args.strategies is not None:
+    
+    if args.strategies is not None and len(args.strategies) > 1:
         STRATEGY_LIST = [strategy for strategy in STRATEGY_LIST if strategy in args.strategies]
 
     if len(STRATEGY_LIST) < 2:
@@ -196,6 +196,10 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     summaryFile = open(summaryFile, "w+")
 
     combinations = list(itertools.combinations(STRATEGY_LIST, r=2))
+
+    if args.strategies is not None and len(args.strategies) == 1:
+        combinations = [pair for pair in combinations if pair[0] == args.strategies[0] or pair[1] == args.strategies[0]]
+
     numCombinations = len(combinations)
     allResults = []
     with Pool() as p:
