@@ -73,6 +73,7 @@ def outputRoundResults(f, c, pair, roundHistory, scoresA, scoresB):
         f.write("\n")
     f.write("Final score for "+pair[0]+": "+str(scoresA)+"\n")
     c.write(pair[0] + "," + pair[1] + "," + str(scoresA) + "," + str(scoresB) + "\n")
+    c.write(pair[1] + "," + pair[0] + "," + str(scoresB) + "," + str(scoresA) + "\n")
     f.write("Final score for "+pair[1]+": "+str(scoresB)+"\n")
     f.write("\n")
     
