@@ -1,4 +1,4 @@
-const names = ['random', 'titForTat'];
+const names = ['FallenAngel', 'FallenAngel2', 'Priest', 'AngryPriest'];
 const COLSIZE = 30;
 
 const data = require('./results.json');
@@ -59,8 +59,6 @@ function compare(data, names) {
   }
 
   participants = participants.map(mapParticipants).sort((a, b) => b[1] - a[1]).map(a => a[0]);
-
-  console.log(participantStuff);
 
   let t1 =  "Opponent ".padStart(COLSIZE);
   let t2 = "---------".padStart(COLSIZE,'-');
