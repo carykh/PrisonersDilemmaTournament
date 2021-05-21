@@ -152,8 +152,8 @@ def runRounds(pair):
         allScoresB.append(scoresB)
     avgScoreA = statistics.mean(allScoresA)
     avgScoreB = statistics.mean(allScoresB)
-    stdevA = statistics.stdev(allScoresA)
-    stdevB = statistics.stdev(allScoresB)
+    stdevA = statistics.stdev(allScoresA) if len(allScoresA) > 1 else 0
+    stdevB = statistics.stdev(allScoresB) if len(allScoresB) > 1 else 0
     outputRoundResults(
         roundResults, pair, firstRoundHistory, scoresA, scoresB, stdevA, stdevB
     )
