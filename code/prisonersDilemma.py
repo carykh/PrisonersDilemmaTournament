@@ -214,7 +214,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                         (nameA, nameB)[scoresList.index(max(scoresList))] + " won"
                     )
                     if avgScoreA != avgScoreB
-                    else " .tie!",
+                    else "tie!",
                 }
             )
             mainFile.write(roundResultsStr)

@@ -8,33 +8,38 @@
         <style>
             html, body {
                 width: 100%;
+                height: 100%;
                 font-family: sans-serif;
             }
-            table { border-collapse:collapse }
 
             body {
                 font-family: 'Roboto Mono', monospace;
-                margin: 1em 0;
                 color: #f7f1ff;
                 background-color: #222222;
-                display:table;
+                display: flex;
+                margin: 0;
+            }
+
+            h4 {
+                font-weight: normal;
+                color: #8b888f;
+                margin: 0;
             }
 
             #container {
                 margin: 0 1em;
-                display:table-row;
+                display: flex;
             }
 
-            .controls {
-                margin-top: 2em;
+            .scoreboard-container {
+                overflow: auto;
+                flex: 1 0 auto;
             }
 
             .scoreboard {
                 border-spacing: 0;
                 border: none;
                 border-collapse: collapse;
-                display:table-cell;
-                width:30em;
                 padding-right: 1em;
             }
 
@@ -44,24 +49,52 @@
 
             .scoreboard td {
                 padding: 0.1em .7em;
-                
             }
+            
+            .rank {
+                color: #8b888f;
+            }
+
+            .avg-score {
+                color: #42d4e6;
+                text-align: right;
+            }
+
             .results {
-                display:table-cell;
                 width:100%;
-                text-align: left;                
+                text-align: left;
+                display: flex;
+                flex-direction: column;
             }
-            .result {
-                margin-right: 1em;
+
+            .controls {
+                padding: 1em 0.5em;
+                flex: 1 0 auto;
             }
+
             .results-container {
-                height: 90vh;
-                overflow-y: scroll;
+                overflow: auto;
+                flex: 0 1 auto;
                 background-color: #191919;
             }
+
+            .result {
+                margin: 0 0.5em 1em 0.5em;
+            }
+
+            .result:first-child {
+                margin-top: 1em;
+            }
+
+            .winner {
+                color: yellow;
+                font-style: italic;
+            }
+
             .history {
                 border-spacing: 1px;
-                margin: 0 20px 0 20px;
+                border-collapse: collapse;
+                margin: 0 2em;
             }
             
             .history th {
@@ -70,6 +103,17 @@
 
             .round-score, .round-strategy {
                 white-space: nowrap;
+            }
+
+            .round-strategy {
+                width: 25em;
+                overflow-x: hidden;
+            }
+
+            .round-score {
+                font-style: italic;
+                text-align: right;
+                padding-right: 2em;
             }
 
             .defect, .cooperate {
@@ -84,12 +128,6 @@
             .cooperate {
                 background-color: #213a2c;
             }
-
-            h4 {
-                font-weight: normal;
-                margin: 20px 0 0 10px;
-                color: #8b888f;
-            }
         </style>
     </head>
     <body>
@@ -103,21 +141,17 @@
 
             const Result = ({result}) => html`
                 <div class="result">
-                    <h4>${result.nameA} vs ${result.nameB} (<span style="color:yellow; font-style:italic">${result.winner}</span>)</h4>
+                    <h4>${result.nameA} vs ${result.nameB} (<span class="winner">${result.winner}</span>)</h4>
                     <table class="history">
                         <tr>
-                            <th class="round-strategy" style="width:15em; overflow-x:hidden">${result.nameA}</th>
-                            <td class="round-score" style="font-style: italic;width:10%; text-align:right">${result.avgScoreA.toFixed(3)} ± ${result.stdevA.toFixed(3)}</td>
-                            <div style="float:right; width: calc(100% - 2em);">
-                                ${historyToTableCells(result.historyA)}
-                            </div>
+                            <th class="round-strategy">${result.nameA}</th>
+                            <td class="round-score">${result.avgScoreA.toFixed(3)} ± ${result.stdevA.toFixed(3)}</td>
+                            ${historyToTableCells(result.historyA)}
                         </tr>
                         <tr>
-                            <th class="round-strategy" style="width:15em; overflow-x:hidden">${result.nameB}</th>
-                            <td class="round-score" style="font-style: italic;width:10%; text-align:right">${result.avgScoreB.toFixed(3)} ± ${result.stdevB.toFixed(3)}</td>
-                            <div style="float:right; width: calc(100% - 2em);">
-                                ${historyToTableCells(result.historyB)}
-                            </div>
+                            <th class="round-strategy">${result.nameB}</th>
+                            <td class="round-score">${result.avgScoreB.toFixed(3)} ± ${result.stdevB.toFixed(3)}</td>
+                            ${historyToTableCells(result.historyB)}
                         </tr>
                     </table>
                 </div>
@@ -165,31 +199,31 @@
             }
 
             const Scoreboard = () => html`
-                <table class="scoreboard">
-                    <thead>
-                        <tr>
-                            <td>Rank</td>
-                            <td>Strategy</td>
-                            <td>Score</td>
-                            <td>Avg</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${strategies.slice(0).sort((a, b) => a.rank - b.rank).map(strategy => html`
+                <div class="scoreboard-container">
+                    <table class="scoreboard">
+                        <thead>
                             <tr>
-                                <td style="color:#8b888f">${strategy.rank + 1}</td>
-                                <td>${strategy.name}</td>
-                                <td>${strategy.score.toFixed(3)}</td>
-                                <td style="color:#42d4e6; text-align: right;">${strategy.avgScore.toFixed(3)}</td>
+                                <td>Rank</td>
+                                <td>Strategy</td>
+                                <td>Score</td>
+                                <td>Avg</td>
                             </tr>
-                        `)}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            ${strategies.slice(0).sort((a, b) => a.rank - b.rank).map(strategy => html`
+                                <tr>
+                                    <td class="rank">${strategy.rank + 1}</td>
+                                    <td>${strategy.name}</td>
+                                    <td>${strategy.score.toFixed(3)}</td>
+                                    <td class="avg-score">${strategy.avgScore.toFixed(3)}</td>
+                                </tr>
+                            `)}
+                        </tbody>
+                    </table>
+                </div>
             `
 
             render(html`<${Scoreboard} /><${ResultsView} />`, document.getElementById('container'));
-
-            console.log(results, strategies);
         </script>
     </body>
 </html>
