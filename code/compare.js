@@ -1,6 +1,8 @@
 let names = ['FallenAngel', 'FallenAngel2', 'Priest', 'AngryPriest'];
 let COLSIZE = 30;
 
+let color = false;
+
 let customNames = false;
 
 for(let i=0;i<process.argv.length;i++){
@@ -10,6 +12,13 @@ for(let i=0;i<process.argv.length;i++){
     process.argv[i].indexOf('--width=')==0
   ){
     COLSIZE = parseInt(process.argv[i].replace('--width=','').replace('-width=','').replace('-w=',''));
+  }
+  if(
+    process.argv[i].indexOf('-c')==0 ||
+    process.argv[i].indexOf('-color')==0 ||
+    process.argv[i].indexOf('--color')==0
+  ){
+    color = true;
   }
   if(i > 1 &&
     process.argv[i].indexOf('-')<0 &&
@@ -94,8 +103,38 @@ function compare(data, names) {
   console.log(`${t1}\n${t2}`);
   for(let i in participants){
     let t = '';
+    let best = [-Infinity,[]];
+    let worst = [Infinity,[]];
     for(let n in names){
-      t += ("| "+Math.round(participantStuff[participants[i]][names[n]]*1000)/1000).padEnd(COLSIZE+1);
+      let v = participantStuff[participants[i]][names[n]];
+      if(v > best[0]){
+        best = [v, [names[n]]];
+      }
+      else if(v == best[0]){
+        best[1].push(names[n]);
+      }
+      if(v < worst[0]){
+        worst = [v, [names[n]]];
+      }
+      else if(v == worst[0]){
+        worst[1].push(names[n]);
+      }
+    }
+    if(best[0] == worst[0]){continue;}
+    //console.log(`\n\nbest: ${best}\nworst: ${worst}\n\n`);
+    for(let n in names){
+      let v = participantStuff[participants[i]][names[n]];
+      if(color){
+        t += `|${best[1].indexOf(names[n])>=0?(worst[1].indexOf(names[n])>=0?'\x1b[100m':'\x1b[42m'):(worst[1].indexOf(names[n])>=0?'\x1b[41m':'')} `+(''+Math.round(v*1000)/1000).padEnd(COLSIZE-1)+'\x1b[0m';
+      }
+      else{
+        if(best[1].indexOf(names[n])>=0){
+          t += ("| > "+Math.round(v*1000)/1000+" <").padEnd(COLSIZE+1);
+        }
+        else{
+          t += ("|   "+Math.round(v*1000)/1000).padEnd(COLSIZE+1);
+        }
+      }
     }
     console.log(`${(''+participants[i]).padEnd(COLSIZE)}${t}`);
   }
