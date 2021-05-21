@@ -56,7 +56,7 @@ STRATEGY_FOLDERS = [
     "saffron",
     "aaaa-trsh",
     "phoenix",
-    "I4vr0v"
+    "l4vr0v"
 ]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
@@ -192,7 +192,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
         for file in os.listdir(inFolder):
             if file.endswith(".py"):
                 STRATEGY_LIST.append(f"{inFolder}.{file[:-3]}")
-    
+
     if args.strategies is not None and len(args.strategies) > 1:
         STRATEGY_LIST = [strategy for strategy in STRATEGY_LIST if strategy in args.strategies]
 
