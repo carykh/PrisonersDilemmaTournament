@@ -41,7 +41,7 @@ def runRound(pair):
     memoryA = None
     memoryB = None
     
-    LENGTH_OF_GAME = int(200-40*np.log(random.random())) # The games are a minimum of 200 turns long. The np.log here guarantees that every turn after the 200th has an equal (low) chance of being the final turn.
+    LENGTH_OF_GAME = int(200-40*np.log(1-random.random())) # The games are a minimum of 200 turns long. The np.log here guarantees that every turn after the 200th has an equal (low) chance of being the final turn.
     history = np.zeros((2,LENGTH_OF_GAME),dtype=int)
     
     for turn in range(LENGTH_OF_GAME):
