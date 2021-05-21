@@ -229,7 +229,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     rankings = np.argsort(scoresNumpy)
     invRankings = [len(rankings) - int(ranking) - 1 for ranking in np.argsort(rankings)]
 
-    with open("viewer-template-dark.html", "r+") as t:
+    with open("viewer-template.html", "r+") as t:
         jsonStrategies = [
             {
                 "name": name,
