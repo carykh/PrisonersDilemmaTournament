@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Prisoner's Dilemma Viewer</title>
+        <meta charset="utf-8">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+        <style>
+            html, body {
+                width: 100%;
+                font-family: sans-serif;
+            }
+            table { border-collapse:collapse }
+
+            body {
+                font-family: 'Roboto Mono', monospace;
+                margin: 1em 0;
+                color: #f7f1ff;
+                background-color: #222222;
+                display:table;
+            }
+
+            #container {
+                margin: 0 1em;
+                display:table-row;
+            }
+
+            .controls {
+                margin-top: 2em;
+            }
+
+            .scoreboard {
+                border-spacing: 0;
+                border: none;
+                border-collapse: collapse;
+                display:table-cell;
+                width:30em;
+                padding-right: 1em;
+            }
+
+            .scoreboard tr:nth-child(even) {
+                background-color: #191919
+            }
+
+            .scoreboard td {
+                padding: 0.1em .7em;
+                
+            }
+            .results {
+                display:table-cell;
+                width:100%;
+                text-align: left;                
+            }
+            .result {
+                margin-right: 1em;
+            }
+            .results-container {
+                height: 90vh;
+                overflow-y: scroll;
+                background-color: #191919;
+            }
+            .history {
+                border-spacing: 1px;
+                margin: 0 20px 0 20px;
+            }
+            
+            .history th {
+                text-align: left;
+            }
+
+            .round-score, .round-strategy {
+                white-space: nowrap;
+            }
+
+            .defect, .cooperate {
+                width: 1em;
+                height: 1em;
+            }
+
+            .defect {
+                background-color: #e23030;
+            }
+
+            .cooperate {
+                background-color: #213a2c;
+            }
+
+            h4 {
+                font-weight: normal;
+                margin: 20px 0 0 10px;
+                color: #8b888f;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="module">
+            import { html, render, Component } from 'https://unpkg.com/htm/preact/standalone.module.js';
+
+            const {results, strategies} = $results;
+
+            const historyToTableCells = history => history.map(action => html`<td class="${action === 0 ? 'defect' : 'cooperate'}" />`)
+
+            const Result = ({result}) => html`
+                <div class="result">
+                    <h4>${result.nameA} vs ${result.nameB} (<span style="color:yellow; font-style:italic">${result.winner}</span>)</h4>
+                    <table class="history">
+                        <tr>
+                            <th class="round-strategy" style="width:15em; overflow-x:hidden">${result.nameA}</th>
+                            <td class="round-score" style="font-style: italic;width:10%; text-align:right">${result.avgScoreA.toFixed(3)} ± ${result.stdevA.toFixed(3)}</td>
+                            <div style="float:right; width: calc(100% - 2em);">
+                                ${historyToTableCells(result.historyA)}
+                            </div>
+                        </tr>
+                        <tr>
+                            <th class="round-strategy" style="width:15em; overflow-x:hidden">${result.nameB}</th>
+                            <td class="round-score" style="font-style: italic;width:10%; text-align:right">${result.avgScoreB.toFixed(3)} ± ${result.stdevB.toFixed(3)}</td>
+                            <div style="float:right; width: calc(100% - 2em);">
+                                ${historyToTableCells(result.historyB)}
+                            </div>
+                        </tr>
+                    </table>
+                </div>
+            `;
+
+            class ResultsView extends Component {
+                constructor (props) {
+                    super(props);
+
+                    this.state = {
+                        enableViewStrategy: false,
+                        viewedStrategy: null
+                    }
+
+                    this.onSetEnableViewStrategy = this.onSetEnableViewStrategy.bind(this);
+                    this.onSetViewedStrategy = this.onSetViewedStrategy.bind(this);
+                }
+
+                onSetEnableViewStrategy (event) {
+                    this.setState({enableViewStrategy: event.target.checked});
+                }
+
+                onSetViewedStrategy (event) {
+                    this.setState({viewedStrategy: event.target.value});
+                }
+
+                render () {
+                    const filteredResults = this.state.enableViewStrategy && strategies.some(strategy => strategy.name === this.state.viewedStrategy) ?
+                        results.filter(result => result.nameA === this.state.viewedStrategy || result.nameB === this.state.viewedStrategy) :
+                        results;
+                    return html`
+                            <div class="results">
+                                <div class="controls">
+                                    <label><input type="checkbox" value=${this.state.enableViewStrategy} onChange=${this.onSetEnableViewStrategy} /> FILTER: </label>
+                                    <select disabled=${!this.state.enableViewStrategy} onInput=${this.onSetViewedStrategy} value=${this.state.viewedStrategy}>
+                                        ${strategies.map(strategy => html`<option value=${strategy.name}>${strategy.name}</option>`)}
+                                    </select>
+                                </div>
+                                <div class="results-container">
+                                    ${filteredResults.map(result => html`<${Result} result=${result} key=${result.nameA + '_' + result.nameB} />`)}
+                                </div>
+                            </div>
+                    `;
+                }
+            }
+
+            const Scoreboard = () => html`
+                <table class="scoreboard">
+                    <thead>
+                        <tr>
+                            <td>Rank</td>
+                            <td>Strategy</td>
+                            <td>Score</td>
+                            <td>Avg</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${strategies.slice(0).sort((a, b) => a.rank - b.rank).map(strategy => html`
+                            <tr>
+                                <td style="color:#8b888f">${strategy.rank + 1}</td>
+                                <td>${strategy.name}</td>
+                                <td>${strategy.score.toFixed(3)}</td>
+                                <td style="color:#42d4e6; text-align: right;">${strategy.avgScore.toFixed(3)}</td>
+                            </tr>
+                        `)}
+                    </tbody>
+                </table>
+            `
+
+            render(html`<${Scoreboard} /><${ResultsView} />`, document.getElementById('container'));
+
+            console.log(results, strategies);
+        </script>
+    </body>
+</html>
