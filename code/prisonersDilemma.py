@@ -119,7 +119,7 @@ def fetch_strategy(inFolder, exceptStrategy=None):
 
     STRATEGY_LIST = []
     for file in os.listdir(os.path.join(script_path, inFolder)):
-        if file.endswith(".py") and file not in exceptStrategy:
+        if file.endswith(".py") and file[:-3] not in exceptStrategy:
             STRATEGY_LIST.append(file[:-3])
 
     return STRATEGY_LIST
