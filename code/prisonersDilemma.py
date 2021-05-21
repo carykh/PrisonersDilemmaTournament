@@ -12,22 +12,6 @@ moveLabels = ["D","C"]
 # D = defect,     betray,       sabotage,  free-ride,     etc.
 # C = cooperate,  stay silent,  comply,    upload files,  etc.
 
-
-# Returns a 2-by-n numpy array. The first axis is which player (0 = us, 1 = opponent)
-# The second axis is which turn. (0 = first turn, 1 = next turn, etc.
-# For example, it might have the values
-#
-# [[0 0 1]       a.k.a.    D D C
-#  [1 1 1]]      a.k.a.    C C C
-#
-# if there have been 3 turns, and we have defected twice then cooperated once,
-# and our opponent has cooperated all three times.
-def getVisibleHistory(history, player, turn):
-    historySoFar = history[:,:turn].copy()
-    if player == 1:
-        historySoFar = np.flip(historySoFar,0)
-    return historySoFar
-
 def strategyMove(move):
     if type(move) is str:
         defects = ["defect","tell truth"]
@@ -43,12 +27,15 @@ def runRound(pair):
     
     LENGTH_OF_GAME = int(200-40*np.log(random.random())) # The games are a minimum of 50 turns long. The np.log here guarantees that every turn after the 50th has an equal (low) chance of being the final turn.
     history = np.zeros((2,LENGTH_OF_GAME),dtype=int)
+    historyFlipped = np.zeros((2,LENGTH_OF_GAME),dtype=int)
     
     for turn in range(LENGTH_OF_GAME):
-        playerAmove, memoryA = moduleA.strategy(getVisibleHistory(history,0,turn),memoryA)
-        playerBmove, memoryB = moduleB.strategy(getVisibleHistory(history,1,turn),memoryB)
+        playerAmove, memoryA = moduleA.strategy(history[:,:turn].copy(),memoryA)
+        playerBmove, memoryB = moduleB.strategy(historyFlipped[:,:turn].copy(),memoryB)
         history[0,turn] = strategyMove(playerAmove)
         history[1,turn] = strategyMove(playerBmove)
+        historyFlipped[0,turn] = history[1,turn]
+        historyFlipped[1,turn] = history[0,turn]
         
     return history
     
