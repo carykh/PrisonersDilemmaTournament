@@ -12,7 +12,7 @@ def strategy(history, memory):
     choice = memory # Use stored value 
 
     if history.shape[1] == 9:
-        ComplyHistory = np.array(history[1, -8:]).tolist().count(1) # I don't know numpy, is this how you do it lol?
+        ComplyHistory = np.count_nonzero(history[1, -8:] == 1) # I don't know numpy, is this how you do it lol?
         if ComplyHistory > 2 and ComplyHistory < 8: # Super easy way of doing it, works good enough
             # It's random, activate trigger and start defecting
             choice = 0
