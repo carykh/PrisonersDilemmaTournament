@@ -4,7 +4,9 @@
 #
 # In this implementation, I used the memory variable to store Grim Trigger's state of mind.
 # memory is true if Grim Trigger has been wronged, and false if it hasn't.
-#
+
+# Reminder: For the history array, "cooperate" = 1, "defect" = 0
+
 def strategy(history, memory):
     wronged = False
     if memory is not None and memory: # Has memory that it was already wronged.
@@ -14,7 +16,7 @@ def strategy(history, memory):
             wronged = True
     
     if wronged:
-        return 0, True
+        return "defect", True
     else:
-        return 1, False
+        return "cooperate", False
     
