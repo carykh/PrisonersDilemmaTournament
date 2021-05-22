@@ -20,7 +20,6 @@ def detectRandomness(history):
             if history[0,-i-1]:
                 randomness+=1
     if randomness>=16:
-        print("randomness detected")
         return True
     return False
 
@@ -46,7 +45,6 @@ def tryRandomness(history, memory):
         memory[TACTIC] = "absoluteMe"
         memory[COOLDOWN] = 3
         memory[TOTALLYISNTRANDOM] = True
-        print("Not Randomness")
         return "cooperate", memory
     return "defect", memory
 
