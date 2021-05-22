@@ -1,8 +1,6 @@
 import random
 
-# Variant of Tit For Tat that randomly defects to try to take advantage
-# of overly forgiving opponents.
-
+# Joss but it forgives instead
 
 def strategy(history, memory):
     choice = 1
