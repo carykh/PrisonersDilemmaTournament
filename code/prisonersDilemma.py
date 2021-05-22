@@ -56,7 +56,8 @@ STRATEGY_FOLDERS = [
     "saffron",
     "aaaa-trsh",
     "phoenix",
-    "l4vr0v"
+    "l4vr0v",
+    "smough"
 ]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
