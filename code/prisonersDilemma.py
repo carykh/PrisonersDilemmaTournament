@@ -34,7 +34,7 @@ def strategyMove(move):
         return 0 if (move in defects) else 1
     else:
         # Coerce all moves to be 0 or 1 so strategies can safely assume 0/1's only
-        return int(bool(move)
+        return int(bool(move))
 
 def runRound(pair):
     moduleA = importlib.import_module(STRATEGY_FOLDER+"."+pair[0])
