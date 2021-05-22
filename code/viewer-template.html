@@ -114,6 +114,7 @@
             .defect, .cooperate {
                 width: 1em;
                 height: 1em;
+                box-shadow: 0 0 1px #000000;
             }
 
             .defect {
@@ -123,6 +124,7 @@
             .cooperate {
                 background-color: #213a2c;
             }
+
         </style>
     </head>
     <body>
@@ -153,8 +155,29 @@
             }
             const sortOrder = localStorage.getItem('sortOrder') || 'run-order';
 
-            const historyToTableCells = history => history.map(action => html`<td class="${action === 0 ? 'defect' : 'cooperate'}" />`)
+            const advantageMapStyle = document.createElement('style');
+            advantageMapStyle.innerHTML = ` 
+                .defect-win {
+                    background-color: #f5e42b;
+                }
 
+                .coop-tie {
+                    background-color: #213a2c;
+                }
+
+                .defect-tie {
+                    background-color: #e23030;
+                }
+
+                .coop-loose {
+                    background-color: #0b2d22;
+                }
+            `;
+            const enableAdvantageMap = localStorage.getItem('enableAdvantageMap') !== 'false';
+            if (enableAdvantageMap) { document.head.appendChild(advantageMapStyle); }
+            //const historyToTableCells = history => history.map(action => html`<td class="${action === 0 ? 'defect' : 'cooperate'} {}" />`)
+            const convertMoveToClass = { "11": "coop-tie", "00": "defect-tie", "01": "defect-win", "10": "coop-loose"  }
+            const historyToTableCells = (selfHistory, enemyHistory) => selfHistory.map((action, index) => html`<td class="${action === 0 ? 'defect' : 'cooperate'} ${convertMoveToClass[action.toString() + enemyHistory[index].toString()]}" />`)
             const Result = ({playerA, playerB}) => html`
                 <div class="result">
                     <h4>${playerA.name} vs ${playerB.name}</h4>
@@ -162,17 +185,17 @@
                         <tr>
                             <th class="round-strategy">${playerA.name}</th>
                             <td class="round-score">${playerA.avgScore.toFixed(3)} ± ${playerA.stdev.toFixed(3)}</td>
-                            ${historyToTableCells(playerA.history)}
+                            ${historyToTableCells(playerA.history, playerB.history)}
                         </tr>
                         <tr>
                             <th class="round-strategy">${playerB.name}</th>
                             <td class="round-score">${playerB.avgScore.toFixed(3)} ± ${playerB.stdev.toFixed(3)}</td>
-                            ${historyToTableCells(playerB.history)}
+                            ${historyToTableCells(playerB.history, playerA.history)}
                         </tr>
                     </table>
                 </div>
             `;
-
+            
             class ResultsView extends Component {
                 constructor (props) {
                     super(props);
@@ -180,10 +203,12 @@
                     this.state = {
                         enableViewStrategy,
                         viewedStrategy,
-                        sortOrder
+                        sortOrder,
+                        enableAdvantageMap
                     }
 
                     this.onSetEnableViewStrategy = this.onSetEnableViewStrategy.bind(this);
+                    this.onSetEnableAdvantageMap = this.onSetEnableAdvantageMap.bind(this);
                     this.onSetViewedStrategy = this.onSetViewedStrategy.bind(this);
                     this.onSetSortOrderRunOrder = this.onSetSortOrder.bind(this, 'run-order');
                     this.onSetSortOrderMyScore = this.onSetSortOrder.bind(this, 'my-score');
@@ -203,6 +228,14 @@
                 onSetSortOrder (sortOrder) {
                     this.setState({sortOrder});
                     localStorage.setItem('sortOrder', sortOrder);
+                }
+
+                onSetEnableAdvantageMap(event) {
+                    if (event.target.checked) { document.head.appendChild(advantageMapStyle); }
+                    else if (document.head.contains(advantageMapStyle)) {
+                        document.head.removeChild(advantageMapStyle);
+                    }
+                    localStorage.setItem('enableAdvantageMap', JSON.stringify(event.target.checked));
                 }
 
                 render () {
@@ -248,6 +281,7 @@
                                         onInput=${this.onSetSortOrderOpponentScore}
                                         disabled=${!this.state.enableViewStrategy}
                                     />Opponent score </label>
+                                    <label><input type="checkbox" checked=${this.state.enableAdvantageMap} onChange=${this.onSetEnableAdvantageMap} /> Highlight Cheat/Losses</label>
                                 </div>
                                 <div class="results-container">
                                     ${filteredResults.map(result => html`<${Result}
