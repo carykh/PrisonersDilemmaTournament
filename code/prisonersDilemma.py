@@ -3,7 +3,7 @@ import itertools
 import importlib
 import numpy as np
 import random
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from io import StringIO
 import statistics
 import argparse
@@ -27,13 +27,42 @@ parser.add_argument(
     help="Skip slow strategies for better performance",
 )
 
+parser.add_argument(
+    "-s",
+    "--strategies",
+    dest="strategies",
+    nargs="+",
+    help="If passed, only these strategies will be tested against each other. If only a single strategy is passed, every other strategy will be paired against it.",
+)
+
+parser.add_argument(
+    "-j",
+    "--num-processes",
+    dest="processes",
+    type=int,
+    default=cpu_count(),
+    help="Number of processes to run the simulation with. By default, this is the same as your CPU core count.",
+)
+
+
 args = parser.parse_args()
 
-STRATEGY_FOLDERS = ["exampleStrats", "valadaptive", "nekiwo", "edward", "misc", "saffron"]
+STRATEGY_FOLDERS = [
+    "exampleStrats",
+    "valadaptive",
+    "nekiwo",
+    "edward",
+    "misc",
+    "saffron",
+    "aaaa-trsh",
+    "phoenix",
+    "l4vr0v"
+]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
 RESULTS_FILE = "results.txt"
 RESULTS_HTML = "results.html"
+RESULTS_JSON = "results.json"
 SUMMARY_FILE = "summary.txt"
 NUM_RUNS = args.num_runs
 
@@ -144,8 +173,8 @@ def runRounds(pair):
         allScoresB.append(scoresB)
     avgScoreA = statistics.mean(allScoresA)
     avgScoreB = statistics.mean(allScoresB)
-    stdevA = statistics.stdev(allScoresA)
-    stdevB = statistics.stdev(allScoresB)
+    stdevA = statistics.stdev(allScoresA) if len(allScoresA) > 1 else 0
+    stdevB = statistics.stdev(allScoresB) if len(allScoresB) > 1 else 0
     outputRoundResults(
         roundResults, pair, firstRoundHistory, scoresA, scoresB, stdevA, stdevB
     )
@@ -164,6 +193,12 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
             if file.endswith(".py"):
                 STRATEGY_LIST.append(f"{inFolder}.{file[:-3]}")
 
+    if args.strategies is not None and len(args.strategies) > 1:
+        STRATEGY_LIST = [strategy for strategy in STRATEGY_LIST if strategy in args.strategies]
+
+    if len(STRATEGY_LIST) < 2:
+        raise ValueError('Not enough strategies!')
+
     for strategy in STRATEGY_LIST:
         scoreKeeper[strategy] = 0
 
@@ -171,9 +206,13 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     summaryFile = open(summaryFile, "w+")
 
     combinations = list(itertools.combinations(STRATEGY_LIST, r=2))
+
+    if args.strategies is not None and len(args.strategies) == 1:
+        combinations = [pair for pair in combinations if pair[0] == args.strategies[0] or pair[1] == args.strategies[0]]
+
     numCombinations = len(combinations)
     allResults = []
-    with Pool() as p:
+    with Pool(args.processes) as p:
         for i, result in enumerate(
             zip(p.imap(runRounds, combinations), combinations), 1
         ):
@@ -190,16 +229,22 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                 roundResultsStr,
             ) = result[0]
             (nameA, nameB) = result[1]
+            scoresList = [avgScoreA, avgScoreB]
+
             allResults.append(
                 {
-                    "nameA": nameA,
-                    "nameB": nameB,
-                    "avgScoreA": avgScoreA,
-                    "avgScoreB": avgScoreB,
-                    "stdevA": stdevA,
-                    "stdevB": stdevB,
-                    "historyA": list(int(x) for x in firstRoundHistory[0]),
-                    "historyB": list(int(x) for x in firstRoundHistory[1]),
+                    "playerA": {
+                        "name": nameA,
+                        "avgScore": avgScoreA,
+                        "stdev": stdevA,
+                        "history": list(int(x) for x in firstRoundHistory[0])
+                    },
+                    "playerB": {
+                        "name": nameB,
+                        "avgScore": avgScoreB,
+                        "stdev": stdevB,
+                        "history": list(int(x) for x in firstRoundHistory[1])
+                    }
                 }
             )
             mainFile.write(roundResultsStr)
@@ -207,6 +252,9 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
             scoreKeeper[nameB] += avgScoreB
     sys.stdout.write("\n")
     sys.stdout.flush()
+
+    with open(RESULTS_JSON, "w+") as j:
+        j.write(json.dumps(allResults))
 
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):

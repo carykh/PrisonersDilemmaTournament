@@ -2,6 +2,7 @@ def strategy(history, memory):
     """
     Grim Moral Tit For Tat, except we punish them 5 times in a row before giving them
     another chance.
+
     memory: (inPunishMode, counter)
     """
 
