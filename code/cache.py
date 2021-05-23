@@ -27,6 +27,9 @@ class AbstractCache:
     def setup(self):
         raise NotImplementedError
 
+    def shutdown(self):
+        raise NotImplementedError
+
     def get(self, pair):
         raise NotImplementedError
 
@@ -52,11 +55,13 @@ class SQLiteCache(AbstractCache):
         self.file = file if file != "" else self.default
         self.cache = sqlite3.connect(self.file)
         self.cur = self.cache.cursor()
+        self.lock = kwargs.get("lock")
 
     def setup(self):
         cache = sqlite3.connect("cache")
         self.cur.execute("PRAGMA read_uncommitted=1")
         self.cur.execute("PRAGMA journal_mode=wal")
+        self.cur.execute("PRAGMA wal_autocheckpoint=0")
         self.cur.execute((
             "CREATE TABLE IF NOT EXISTS cache ("
             "moduleA text NOT NULL,"
@@ -65,12 +70,16 @@ class SQLiteCache(AbstractCache):
             "timestamp number NOT NULL )"
         ))
 
+        cache.commit()
+
+    def shutdown(self):
+        self.cur.execute("PRAGMA wal_checkpoint(FULL)")
+        self.close()
+
     def get(self, pair):
         mod = self.get_last_modified(pair)
 
         cur = self.cur
-        cur.execute("PRAGMA read_uncommitted=1")
-        cur.execute("PRAGMA journal_mode=wal")
 
         res = cur.execute(f"SELECT result FROM cache WHERE timestamp >= ? AND moduleA = ? AND moduleB = ?",
                           (mod, pair[0], pair[1])).fetchone()
@@ -115,6 +124,9 @@ class JSONCache(AbstractCache):
         self.lock = kwargs.get("lock")
 
     def setup(self):
+        pass
+
+    def shutdown(self):
         pass
 
     def get(self, pair):
