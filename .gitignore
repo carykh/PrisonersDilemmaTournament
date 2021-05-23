@@ -5,3 +5,7 @@ code/results.json
 code/results.html
 edward/
 comp/
+/code/cache
+/code/cache-wal
+/code/cache-shm
+/code/cache.json
