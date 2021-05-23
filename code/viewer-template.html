@@ -359,8 +359,9 @@
                                     onInput=${this.onSetViewedStrategy}
                                     value=${this.state.viewedStrategy}
                                 >
-                                    ${strategies.map(
-                                        (strategy) =>
+                                    ${strategies
+                                        .sort((a, b) => a.name > b.name ? 1 : -1)
+                                        .map((strategy) =>
                                             html`<option value=${strategy.name}>
                                                 ${strategy.name}
                                             </option>`
