@@ -1,6 +1,12 @@
+import base64
+import codecs
 import os
 import itertools
 import importlib
+import importlib.abc
+import pathlib
+import pickle
+
 import numpy as np
 import random
 from multiprocessing import Pool, cpu_count
@@ -9,6 +15,7 @@ import statistics
 import argparse
 import sys
 import json
+import sqlite3
 
 parser = argparse.ArgumentParser(description="Run the Prisoner's Dilemma simulation.")
 parser.add_argument(
@@ -18,6 +25,15 @@ parser.add_argument(
     type=int,
     default=100,
     help="Number of runs to average out",
+)
+
+parser.add_argument(
+    "-d",
+    "--use-docker",
+    dest="use_docker",
+    type=bool,
+    default=False,
+    help="Whether to use Docker or not."
 )
 
 parser.add_argument(
@@ -36,6 +52,14 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--no-cache",
+    dest="cache",
+    action="store_false",
+    default=True,
+    help="Ignores the cache."
+)
+
+parser.add_argument(
     "-j",
     "--num-processes",
     dest="processes",
@@ -49,15 +73,15 @@ args = parser.parse_args()
 
 STRATEGY_FOLDERS = [
     "exampleStrats",
-    "valadaptive",
-    "nekiwo",
-    "edward",
-    "misc",
-    "saffron",
-    "aaaa-trsh",
-    "phoenix",
-    "l4vr0v",
-    "smough"
+#    "valadaptive",
+#    "nekiwo",
+#    "edward",
+#    "misc",
+#    "saffron",
+#    "aaaa-trsh",
+#    "phoenix",
+#    "l4vr0v",
+#    "smough"
 ]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
@@ -162,7 +186,34 @@ def progressBar(width, completion):
     return f"[{'=' * numCompleted}{' ' * (width - numCompleted)}]"
 
 
+def file_location_from_spec(p: str):
+    return p.replace(".", "/") + ".py"
+
+
 def runRounds(pair):
+    if args.cache:
+        afile = pathlib.Path(file_location_from_spec(pair[0])).absolute()
+        bfile = pathlib.Path(file_location_from_spec(pair[1])).absolute()
+        almod = os.path.getmtime(afile)
+        blmod = os.path.getmtime(bfile)
+        mod = max(almod, blmod)
+
+        cache = sqlite3.connect("cache")
+        cur = cache.cursor()
+
+        res = cur.execute(f"SELECT result FROM cache WHERE timestamp >= ? AND moduleA = ? AND moduleB = ?", (mod, pair[0], pair[1])).fetchone()
+        if res:
+            unpacked = pickle.loads(base64.b64decode(res[0]))
+            cur.close()
+            cache.close()
+            return (True,
+                    unpacked.get("avgScoreA"),
+                    unpacked.get("avgScoreB"),
+                    unpacked.get("stdevA"),
+                    unpacked.get("stdevB"),
+                    unpacked.get("firstRoundHistory"),
+                    unpacked.get("roundResultsStr"))
+
     roundResults = StringIO()
     allScoresA = []
     allScoresB = []
@@ -184,11 +235,44 @@ def runRounds(pair):
     roundResults.flush()
     roundResultsStr = roundResults.getvalue()
     roundResults.close()
-    return (avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr)
+
+    if args.cache:
+        renc = {
+            "avgScoreA": avgScoreA,
+            "avgScoreB": avgScoreA,
+            "stdevA": avgScoreA,
+            "stdevB": avgScoreA,
+            "firstRoundHistory": firstRoundHistory,
+            "roundResultsStr": roundResultsStr
+        }
+        rstr = base64.b64encode(pickle.dumps(renc))
+        cur.execute("INSERT INTO cache (moduleA, moduleB, result, timestamp)"
+                    "VALUES(?, ?, ?, ?)", (pair[0], pair[1], rstr, mod))
+        cur.close()
+        cache.commit()
+        cache.close()
+
+    return False, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr
 
 
 def runFullPairingTournament(inFolders, outFile, summaryFile):
     print("Starting tournament, reading files from " + ", ".join(inFolders))
+
+    if args.cache:
+        cache = sqlite3.connect("cache")
+        cur = cache.cursor()
+
+        cur.execute((
+            "CREATE TABLE IF NOT EXISTS cache ("
+            "moduleA text NOT NULL,"
+            "moduleB text NOT NULL,"
+            "result text NOT NULL,"
+            "timestamp number NOT NULL )"
+        ))
+        cur.close()
+        cache.commit()
+        cache.close()
+
     scoreKeeper = {}
     STRATEGY_LIST = []
     for inFolder in inFolders:
@@ -216,14 +300,12 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     numCombinations = len(combinations)
     allResults = []
     with Pool(args.processes) as p:
+        hits = 0
         for i, result in enumerate(
             zip(p.imap(runRounds, combinations), combinations), 1
         ):
-            sys.stdout.write(
-                f"\r{i}/{numCombinations} pairings ({NUM_RUNS} runs per pairing) {progressBar(50, i / numCombinations)}"
-            )
-            sys.stdout.flush()
             (
+                cached,
                 avgScoreA,
                 avgScoreB,
                 stdevA,
@@ -231,6 +313,14 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                 firstRoundHistory,
                 roundResultsStr,
             ) = result[0]
+
+            if cached:
+                hits += 1
+
+            sys.stdout.write(
+                f"\r{i}/{numCombinations} pairings ({NUM_RUNS} runs per pairing, {hits} hits, {i-hits} misses) {progressBar(50, i / numCombinations)}"
+            )
+            sys.stdout.flush()
             (nameA, nameB) = result[1]
             scoresList = [avgScoreA, avgScoreB]
 
