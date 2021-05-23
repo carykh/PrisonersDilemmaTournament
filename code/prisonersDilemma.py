@@ -1,5 +1,4 @@
 import base64
-import codecs
 import os
 import itertools
 import importlib
@@ -73,15 +72,15 @@ args = parser.parse_args()
 
 STRATEGY_FOLDERS = [
     "exampleStrats",
-#    "valadaptive",
-#    "nekiwo",
-#    "edward",
-#    "misc",
-#    "saffron",
-#    "aaaa-trsh",
-#    "phoenix",
-#    "l4vr0v",
-#    "smough"
+    "valadaptive",
+    "nekiwo",
+    "edward",
+    "misc",
+    "saffron",
+    "aaaa-trsh",
+    "phoenix",
+    "l4vr0v",
+    "smough"
 ]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
