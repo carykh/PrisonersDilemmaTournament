@@ -1,21 +1,20 @@
 #!/usr/bin/env python
 
 
-''' Reads a results.txt file which was output by prisonersDilemma.py
+""" Reads a results.txt file which was output by prisonersDilemma.py
     and simulates what the rankings would be if there were many agents
     with different strategy distributions across the agents
-'''
-
+"""
 
 import pprint
+import pathlib
 
-
-RESULTS_FILE_PATH = "../discord_group/PrisonersDilemmaTournament/code/results.txt"
+RESULTS_FILE_PATH = pathlib.Path("results.txt").absolute()
 
 # Within a given distribution, strats that aren't mentioned have equal weight to each other and sum up to 1
 STRATEGY_DISTRIBUTIONS = [
     {"exampleStrats.titForTat": 4},  # 80% of agents use a tft strat
-    {"exampleStrats.random": 3},     # 75% of agents use a random strat
+    {"exampleStrats.random": 3},  # 75% of agents use a random strat
     {"exampleStrats.titForTat": 2, "exampleStrats.random": 1},
     {"exampleStrats.titForTat": 1, "exampleStrats.random": 1, "exampleStrats.ftft": 0.5}
 ]
@@ -78,11 +77,11 @@ def simulate_strategy_distribution(matchups_dict, strategy_names, distribution):
         total_scores[name_a] += strategy_weights[name_b] * float(scores[0])
         total_scores[name_b] += strategy_weights[name_a] * float(scores[1])
 
-    rankings = sorted(((v,k) for k,v in total_scores.items()), reverse=True)
+    rankings = sorted(((v, k) for k, v in total_scores.items()), reverse=True)
 
     pprint.pp(rankings)
     print()
-            
+
 
 # Returns a dict representing the a normalized weight vector of all the strategies given
 def _get_strategy_weights(strategy_names, distribution):
@@ -90,11 +89,11 @@ def _get_strategy_weights(strategy_names, distribution):
     default_weight = 1 / (len(strategy_names) - len(distribution))
 
     for name in strategy_weights:
-        if not name in strategy_names:
+        if name not in strategy_names:
             raise Exception(f"The given name {name} does not exist in results.txt")
 
     for strategy_name in strategy_names:
-        if not strategy_name in strategy_weights:
+        if strategy_name not in strategy_weights:
             strategy_weights[strategy_name] = default_weight
 
     total_weight = 0
