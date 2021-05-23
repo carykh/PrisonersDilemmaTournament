@@ -1,6 +1,11 @@
+import multiprocessing
 import os
 import itertools
 import importlib
+import time
+
+import cache as cachelib
+
 import numpy as np
 import random
 from multiprocessing import Pool, cpu_count
@@ -35,6 +40,50 @@ parser.add_argument(
     help="If passed, only these strategies will be tested against each other. If only a single strategy is passed, every other strategy will be paired against it.",
 )
 
+cacheparser = parser.add_argument_group("Cache")
+
+cacheparser.add_argument(
+    "--no-cache",
+    dest="cache",
+    action="store_false",
+    default=True,
+    help="Ignores the cache."
+)
+
+cacheparser.add_argument(
+    "--delete-cache",
+    "--remove-cache",
+    dest="delete_cache",
+    action="store_true",
+    default=False,
+    help="Deletes the cache."
+)
+
+cacheparser.add_argument(
+    "-k",
+    "--cache-backend",
+    dest="cache_backend",
+    type=str,
+    default="sqlite",
+    help="Specifies which cache backend to use. (sqlite or json)"
+)
+
+cacheparser.add_argument(
+    "--cache-file",
+    dest="cache_file",
+    type=str,
+    default="",
+    help="Specifies the cache file to use."
+)
+
+parser.add_argument(
+    "--no-weights",
+    dest="weights",
+    action="store_false",
+    default=True,
+    help="Ignores weights set in weights.json."
+)
+
 parser.add_argument(
     "-j",
     "--num-processes",
@@ -58,7 +107,8 @@ STRATEGY_FOLDERS = [
     "phoenix",
     "l4vr0v",
     "smough",
-    "dratini0"
+    "dratini0",
+    "decxjo",
 ]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
@@ -164,6 +214,13 @@ def progressBar(width, completion):
 
 
 def runRounds(pair):
+    if args.cache:
+        cache = cachelib.get_backend(args, lock=lock)
+        r = cache.get(pair)
+        if r:
+            cache.close()
+            return True, *r
+
     roundResults = StringIO()
     allScoresA = []
     allScoresB = []
@@ -185,11 +242,34 @@ def runRounds(pair):
     roundResults.flush()
     roundResultsStr = roundResults.getvalue()
     roundResults.close()
-    return (avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr)
+
+    if args.cache:
+        cache.insert(pair, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr)
+        cache.close()
+
+    return False, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr
+
+
+def pool_init(l):
+    global lock
+    lock = l
 
 
 def runFullPairingTournament(inFolders, outFile, summaryFile):
+    st = time.time()
     print("Starting tournament, reading files from " + ", ".join(inFolders))
+    if args.delete_cache:
+        try:
+            cache = cachelib.get_backend(args)
+            file = args.cache_file
+            os.remove(file if file != "" else cache.default)
+        except FileNotFoundError:
+            pass
+
+    if args.cache:
+        cache = cachelib.get_backend(args)
+        cache.setup()
+
     scoreKeeper = {}
     STRATEGY_LIST = []
     for inFolder in inFolders:
@@ -216,15 +296,13 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
 
     numCombinations = len(combinations)
     allResults = []
-    with Pool(args.processes) as p:
+    with Pool(args.processes, initializer=pool_init, initargs=(multiprocessing.Lock(),)) as p:
+        hits = 0
         for i, result in enumerate(
             zip(p.imap(runRounds, combinations), combinations), 1
         ):
-            sys.stdout.write(
-                f"\r{i}/{numCombinations} pairings ({NUM_RUNS} runs per pairing) {progressBar(50, i / numCombinations)}"
-            )
-            sys.stdout.flush()
             (
+                cached,
                 avgScoreA,
                 avgScoreB,
                 stdevA,
@@ -232,6 +310,14 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                 firstRoundHistory,
                 roundResultsStr,
             ) = result[0]
+
+            if cached:
+                hits += 1
+
+            sys.stdout.write(
+                f"\r{i}/{numCombinations} pairings ({NUM_RUNS} runs per pairing, {hits} hits, {i-hits} misses) {progressBar(50, i / numCombinations)}"
+            )
+            sys.stdout.flush()
             (nameA, nameB) = result[1]
             scoresList = [avgScoreA, avgScoreB]
 
@@ -294,7 +380,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     mainFile.close()
     summaryFile.flush()
     summaryFile.close()
-    print("Done with everything! Results file written to " + RESULTS_FILE)
+    print(f"Done with everything! ({time.time() - st}) Results file written to {RESULTS_FILE}")
 
 
 if __name__ == "__main__":
