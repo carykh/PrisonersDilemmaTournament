@@ -55,7 +55,6 @@ class SQLiteCache(AbstractCache):
         self.file = file if file != "" else self.default
         self.cache = sqlite3.connect(self.file)
         self.cur = self.cache.cursor()
-        self.lock = kwargs.get("lock")
 
     def setup(self):
         cache = sqlite3.connect("cache")
