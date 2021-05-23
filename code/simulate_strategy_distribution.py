@@ -8,9 +8,10 @@
 
 
 import pprint
+import pathlib
 
 
-RESULTS_FILE_PATH = "../discord_group/PrisonersDilemmaTournament/code/results.txt"
+RESULTS_FILE_PATH = pathlib.Path("results.txt").absolute()
 
 # Within a given distribution, strats that aren't mentioned have equal weight to each other and sum up to 1
 STRATEGY_DISTRIBUTIONS = [
