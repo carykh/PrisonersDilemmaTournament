@@ -240,9 +240,9 @@ def runRounds(pair):
     if args.cache:
         renc = {
             "avgScoreA": avgScoreA,
-            "avgScoreB": avgScoreA,
-            "stdevA": avgScoreA,
-            "stdevB": avgScoreA,
+            "avgScoreB": avgScoreB,
+            "stdevA": stdevA,
+            "stdevB": stdevB,
             "firstRoundHistory": firstRoundHistory,
             "roundResultsStr": roundResultsStr
         }
@@ -253,7 +253,7 @@ def runRounds(pair):
         cache.commit()
         cache.close()
 
-    return False, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr
+    return (False, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr)
 
 
 def runFullPairingTournament(inFolders, outFile, summaryFile):
@@ -280,9 +280,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     for inFolder in inFolders:
         for file in os.listdir(inFolder):
             if file.endswith(".py"):
-                name = f"{inFolder}.{file[:-3]}"
-
-                STRATEGY_LIST.append(name)
+                STRATEGY_LIST.append(f"{inFolder}.{file[:-3]}")
 
     if args.strategies is not None and len(args.strategies) > 1:
         STRATEGY_LIST = [strategy for strategy in STRATEGY_LIST if strategy in args.strategies]
