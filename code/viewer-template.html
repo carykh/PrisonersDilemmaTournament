@@ -257,7 +257,7 @@
                                 <div class="controls">
                                     <label><input type="checkbox" checked=${this.state.enableViewStrategy} onChange=${this.onSetEnableViewStrategy} /> FILTER: </label>
                                     <select disabled=${!this.state.enableViewStrategy} onInput=${this.onSetViewedStrategy} value=${this.state.viewedStrategy}>
-                                        ${strategies.map(strategy => html`<option value=${strategy.name}>${strategy.name}</option>`)}
+                                        ${strategies.sort((a, b) => a.name.localeCompare(b.name)).map(strategy => html`<option value=${strategy.name}>${strategy.name}</option>`)}
                                     </select>
                                     <span> SORT BY: </span>
                                     <label><input
