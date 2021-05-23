@@ -43,6 +43,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   publish:
+    concurrency:
+      group: push-result-to-discord
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     needs: run
     steps:
