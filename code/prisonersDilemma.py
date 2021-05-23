@@ -49,6 +49,14 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--no-weights",
+    dest="weights",
+    action="store_false",
+    default=True,
+    help="Ignores weights set in weights.json."
+)
+
+parser.add_argument(
     "-j",
     "--num-processes",
     dest="processes",
@@ -183,9 +191,11 @@ def runRounds(pair):
     if args.cache:
         afile = pathlib.Path(file_location_from_spec(pair[0])).absolute()
         bfile = pathlib.Path(file_location_from_spec(pair[1])).absolute()
+        sfile = pathlib.Path(sys.argv[0]).absolute()
         almod = os.path.getmtime(afile)
         blmod = os.path.getmtime(bfile)
-        mod = max(almod, blmod)
+        slmod = os.path.getmtime(sfile)
+        mod = max(almod, blmod, slmod)
 
         cache = sqlite3.connect("cache")
         cur = cache.cursor()
@@ -270,7 +280,9 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     for inFolder in inFolders:
         for file in os.listdir(inFolder):
             if file.endswith(".py"):
-                STRATEGY_LIST.append(f"{inFolder}.{file[:-3]}")
+                name = f"{inFolder}.{file[:-3]}"
+
+                STRATEGY_LIST.append(name)
 
     if args.strategies is not None and len(args.strategies) > 1:
         STRATEGY_LIST = [strategy for strategy in STRATEGY_LIST if strategy in args.strategies]
