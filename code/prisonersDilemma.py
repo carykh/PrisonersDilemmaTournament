@@ -1,9 +1,11 @@
-import base64
+import functools
+import multiprocessing
 import os
 import itertools
 import importlib
-import pathlib
-import pickle
+import time
+
+import cache as cachelib
 
 import numpy as np
 import random
@@ -13,7 +15,6 @@ import statistics
 import argparse
 import sys
 import json
-import sqlite3
 
 parser = argparse.ArgumentParser(description="Run the Prisoner's Dilemma simulation.")
 parser.add_argument(
@@ -40,12 +41,40 @@ parser.add_argument(
     help="If passed, only these strategies will be tested against each other. If only a single strategy is passed, every other strategy will be paired against it.",
 )
 
-parser.add_argument(
+cacheparser = parser.add_argument_group("Cache")
+
+cacheparser.add_argument(
     "--no-cache",
     dest="cache",
     action="store_false",
     default=True,
     help="Ignores the cache."
+)
+
+cacheparser.add_argument(
+    "--delete-cache",
+    "--remove-cache",
+    dest="delete_cache",
+    action="store_true",
+    default=False,
+    help="Deletes the cache."
+)
+
+cacheparser.add_argument(
+    "-k",
+    "--cache-backend",
+    dest="cache_backend",
+    type=str,
+    default="sqlite",
+    help="Specifies which cache backend to use. (sqlite or json)"
+)
+
+cacheparser.add_argument(
+    "--cache-file",
+    dest="cache_file",
+    type=str,
+    default="",
+    help="Specifies the cache file to use."
 )
 
 parser.add_argument(
@@ -70,15 +99,15 @@ args = parser.parse_args()
 
 STRATEGY_FOLDERS = [
     "exampleStrats",
-    "valadaptive",
-    "nekiwo",
-    "edward",
-    "misc",
-    "saffron",
-    "aaaa-trsh",
-    "phoenix",
-    "l4vr0v",
-    "smough"
+#    "valadaptive",
+#    "nekiwo",
+#    "edward",
+#    "misc",
+#    "saffron",
+#    "aaaa-trsh",
+#    "phoenix",
+#    "l4vr0v",
+#    "smough"
 ]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
@@ -183,37 +212,13 @@ def progressBar(width, completion):
     return f"[{'=' * numCompleted}{' ' * (width - numCompleted)}]"
 
 
-def file_location_from_spec(p: str):
-    return p.replace(".", "/") + ".py"
-
-
 def runRounds(pair):
     if args.cache:
-        afile = pathlib.Path(file_location_from_spec(pair[0])).absolute()
-        bfile = pathlib.Path(file_location_from_spec(pair[1])).absolute()
-        sfile = pathlib.Path(sys.argv[0]).absolute()
-        almod = os.path.getmtime(afile)
-        blmod = os.path.getmtime(bfile)
-        slmod = os.path.getmtime(sfile)
-        mod = max(almod, blmod, slmod)
-
-        cache = sqlite3.connect("cache")
-        cur = cache.cursor()
-        cur.execute("PRAGMA read_uncommitted=1")
-        cur.execute("PRAGMA journal_mode=wal")
-
-        res = cur.execute(f"SELECT result FROM cache WHERE timestamp >= ? AND moduleA = ? AND moduleB = ?", (mod, pair[0], pair[1])).fetchone()
-        if res:
-            unpacked = pickle.loads(base64.b64decode(res[0]))
-            cur.close()
+        cache = cachelib.get_backend(args, lock=lock)
+        r = cache.get(pair)
+        if r:
             cache.close()
-            return (True,
-                    unpacked.get("avgScoreA"),
-                    unpacked.get("avgScoreB"),
-                    unpacked.get("stdevA"),
-                    unpacked.get("stdevB"),
-                    unpacked.get("firstRoundHistory"),
-                    unpacked.get("roundResultsStr"))
+            return True, *r
 
     roundResults = StringIO()
     allScoresA = []
@@ -238,42 +243,31 @@ def runRounds(pair):
     roundResults.close()
 
     if args.cache:
-        renc = {
-            "avgScoreA": avgScoreA,
-            "avgScoreB": avgScoreB,
-            "stdevA": stdevA,
-            "stdevB": stdevB,
-            "firstRoundHistory": firstRoundHistory,
-            "roundResultsStr": roundResultsStr
-        }
-        rstr = base64.b64encode(pickle.dumps(renc))
-        cur.execute("INSERT INTO cache (moduleA, moduleB, result, timestamp)"
-                    "VALUES(?, ?, ?, ?)", (pair[0], pair[1], rstr, mod))
-        cur.close()
-        cache.commit()
+        cache.insert(pair, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr)
         cache.close()
 
-    return (False, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr)
+    return False, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr
+
+
+def pool_init(l):
+    global lock
+    lock = l
 
 
 def runFullPairingTournament(inFolders, outFile, summaryFile):
+    st = time.time()
     print("Starting tournament, reading files from " + ", ".join(inFolders))
+    if args.delete_cache:
+        try:
+            cache = cachelib.get_backend(args)
+            file = args.cache_file
+            os.remove(file if file != "" else cache.default)
+        except FileNotFoundError:
+            pass
 
     if args.cache:
-        cache = sqlite3.connect("cache")
-        cur = cache.cursor()
-        cur.execute("PRAGMA read_uncommitted=1")
-        cur.execute("PRAGMA journal_mode=wal")
-        cur.execute((
-            "CREATE TABLE IF NOT EXISTS cache ("
-            "moduleA text NOT NULL,"
-            "moduleB text NOT NULL,"
-            "result text NOT NULL,"
-            "timestamp number NOT NULL )"
-        ))
-        cur.close()
-        cache.commit()
-        cache.close()
+        cache = cachelib.get_backend(args)
+        cache.setup()
 
     scoreKeeper = {}
     STRATEGY_LIST = []
@@ -301,7 +295,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
 
     numCombinations = len(combinations)
     allResults = []
-    with Pool(args.processes) as p:
+    with Pool(args.processes, initializer=pool_init, initargs=(multiprocessing.Lock(),)) as p:
         hits = 0
         for i, result in enumerate(
             zip(p.imap(runRounds, combinations), combinations), 1
@@ -385,7 +379,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     mainFile.close()
     summaryFile.flush()
     summaryFile.close()
-    print("Done with everything! Results file written to " + RESULTS_FILE)
+    print(f"Done with everything! ({time.time() - st}) Results file written to {RESULTS_FILE}")
 
 
 if __name__ == "__main__":
