@@ -27,15 +27,6 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "-d",
-    "--use-docker",
-    dest="use_docker",
-    type=bool,
-    default=False,
-    help="Whether to use Docker or not."
-)
-
-parser.add_argument(
     "--skip-slow",
     dest="use_slow",
     action="store_false",
