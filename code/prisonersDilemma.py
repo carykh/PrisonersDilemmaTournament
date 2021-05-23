@@ -189,6 +189,8 @@ def runRounds(pair):
 
         cache = sqlite3.connect("cache")
         cur = cache.cursor()
+        cur.execute("PRAGMA read_uncommitted=1")
+        cur.execute("PRAGMA journal_mode=wal")
 
         res = cur.execute(f"SELECT result FROM cache WHERE timestamp >= ? AND moduleA = ? AND moduleB = ?", (mod, pair[0], pair[1])).fetchone()
         if res:
@@ -250,7 +252,8 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     if args.cache:
         cache = sqlite3.connect("cache")
         cur = cache.cursor()
-
+        cur.execute("PRAGMA read_uncommitted=1")
+        cur.execute("PRAGMA journal_mode=wal")
         cur.execute((
             "CREATE TABLE IF NOT EXISTS cache ("
             "moduleA text NOT NULL,"
