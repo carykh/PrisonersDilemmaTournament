@@ -20,7 +20,7 @@ jobs:
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
       - run: pip install --user numpy
       - run: mkdir etc
-      - run: python prisonersDilemma.py --no-cache
+      - run: python prisonersDilemma.py --no-cache -n 25
       - id: summary
         run: |
             output="$(cat summary.txt)"
