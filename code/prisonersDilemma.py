@@ -159,5 +159,6 @@ def runFullPairingTournament(inFolder, outFile):
     f.close()
     print("Done with everything! Results file written to "+RESULTS_FILE)
     
-    
-runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
+if __name__ == "__main__":
+    freeze_support()
+    runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
