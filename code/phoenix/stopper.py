@@ -16,7 +16,8 @@ def score(hist):
     return score_a / ROUND_LENGTH, score_b / ROUND_LENGTH
 
 
-def strategy(hist, _):
+def strategy(history, memory):
+    hist = history
     choice = 1
     
     if hist.shape[1] <= 5:
@@ -32,4 +33,4 @@ def strategy(hist, _):
             if hist.shape[1] % 20 < 2 and hist[1].sum() != 0:
                 choice = 1
 
-    return choice, _
+    return choice, memory
