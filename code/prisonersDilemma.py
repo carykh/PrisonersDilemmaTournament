@@ -8,7 +8,8 @@ from multiprocessing import Queue, Process, freeze_support
 STRATEGY_FOLDER = "exampleStrats"
 RESULTS_FILE = "results.txt"
 
-PARALLEL_WORKERS = os.cpu_count()//2 # Assumes multithreaded CPU
+# Assumes multithreaded CPU, as such divides by 2, set to zero to prevent spawning of child processes (for debugging and in case of issues in Windows)
+PARALLEL_WORKERS = os.cpu_count()//2
 
 pointsArray = [[1,5],[0,3]] # The i-j-th element of this array is how many points you receive if you do play i, and your opponent does play j.
 moveLabels = ["D","C"]
@@ -110,9 +111,11 @@ def runFullPairingTournament(inFolder, outFile):
     for pair in pairs:
         work_queue.put(pair)
 
-    print("Starting {} workers...".format(PARALLEL_WORKERS))
-    for i in range(PARALLEL_WORKERS):
-        Process(target=runRoundWorker, args=(work_queue, done_queue)).start()    
+    # If we are not using workers then use
+    if PARALLEL_WORKERS > 0:
+        print("Starting {} workers...".format(PARALLEL_WORKERS))
+        for i in range(PARALLEL_WORKERS):
+            Process(target=runRoundWorker, args=(work_queue, done_queue)).start()    
     
     # Adds stop flags to the work queue
     for i in range(PARALLEL_WORKERS):
@@ -125,7 +128,13 @@ def runFullPairingTournament(inFolder, outFile):
         n_round += 1
         sys.stdout.write("\rRound {} of {}".format(n_round, n_pairs))
 
-        pair, roundHistory = done_queue.get()    
+        if PARALLEL_WORKERS == 0:
+            # Iterative code
+            pair = pairs[i]
+            roundHistory = runRound(pair)
+        else:
+            # Parallel code, wait for the workers results
+            pair, roundHistory = done_queue.get()    
 
         scoresA, scoresB = tallyRoundScores(roundHistory)
         outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
