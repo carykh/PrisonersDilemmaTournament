@@ -107,6 +107,7 @@ STRATEGY_FOLDERS = [
     "phoenix",
     "l4vr0v",
     "smough",
+    "dratini0",
     "decxjo",
 ]
 if args.use_slow:
