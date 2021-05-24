@@ -40,6 +40,8 @@ def strategy(history, memory):
     if memory == "Feed the Devil":
         if history[1][-1] == 0:
             return 1, "Feed the Devil"
+        else:
+            return ftft(history), "Business as usual"
     if exploit_detector(history):
         return 0, "You dirty scammer"
     if randomness_detector(history):
