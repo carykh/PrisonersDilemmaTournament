@@ -26,6 +26,12 @@ moveLabels = ["D","C"]
 #
 # if there have been 3 turns, and we have defected twice then cooperated once,
 # and our opponent has cooperated all three times.
+def getVisibleHistory(history, player, turn):
+    historySoFar = history[:,:turn].copy()
+    if player == 1:
+        historySoFar = np.flip(historySoFar,0)
+    return historySoFar
+
 def strategyMove(move):
     if type(move) is str:
         defects = ["defect","tell truth"]
@@ -44,15 +50,12 @@ def runRound(pair):
     
     LENGTH_OF_GAME = int(200-40*np.log(1-random.random())) # The games are a minimum of 200 turns long. The np.log here guarantees that every turn after the 200th has an equal (low) chance of being the final turn.
     history = np.zeros((2,LENGTH_OF_GAME),dtype=int)
-    historyFlipped = np.zeros((2,LENGTH_OF_GAME),dtype=int)
     
     for turn in range(LENGTH_OF_GAME):
-        playerAmove, memoryA = moduleA.strategy(history[:,:turn].copy(),memoryA)
-        playerBmove, memoryB = moduleB.strategy(historyFlipped[:,:turn].copy(),memoryB)
+        playerAmove, memoryA = moduleA.strategy(getVisibleHistory(history,0,turn),memoryA)
+        playerBmove, memoryB = moduleB.strategy(getVisibleHistory(history,1,turn),memoryB)
         history[0,turn] = strategyMove(playerAmove)
         history[1,turn] = strategyMove(playerBmove)
-        historyFlipped[0,turn] = history[1,turn]
-        historyFlipped[1,turn] = history[0,turn]
         
     return history
 
