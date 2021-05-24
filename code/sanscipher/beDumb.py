@@ -36,8 +36,7 @@ def strategy(history, memory):
     if memory == "You dirty scammer":
         return 0, "You dirty scammer"
     if memory == "Randoms, we like":
-        if turn % 10 != 0:
-            return 1, "Randoms, we like"
+        return 1, "Randoms, we like"
     if memory == "Feed the Devil":
         if history[1][-1] == 0:
             return 1, "Feed the Devil"
