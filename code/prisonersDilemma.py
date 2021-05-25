@@ -64,7 +64,7 @@ cacheparser.add_argument(
     "--cache-backend",
     dest="cache_backend",
     type=str,
-    default="sqlite",
+    default="json",
     help="Specifies which cache backend to use. (sqlite or json)"
 )
 
@@ -98,19 +98,19 @@ args = parser.parse_args()
 
 STRATEGY_FOLDERS = [
     "exampleStrats",
-    "valadaptive",
-    "nekiwo",
+    #"valadaptive",
+    #"nekiwo",
     "edward",
-    "misc",
-    "saffron",
-    "aaaa-trsh",
-    "phoenix",
-    "l4vr0v",
-    "smough",
-    "dratini0",
-    "decxjo",
-    "Nobody5050",
-    "sanscipher"
+    #"misc",
+    #"saffron",
+    #"aaaa-trsh",
+    #"phoenix",
+    #"l4vr0v",
+    #"smough",
+    #"dratini0",
+    #"decxjo",
+    #"Nobody5050",
+    #"sanscipher"
 ]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
@@ -142,7 +142,7 @@ def runRound(pair):
     memoryA = None
     memoryB = None
 
-    # The games are a minimum of 200 turns long. 
+    # The games are a minimum of 200 turns long.
     # The np.log here guarantees that every turn after the 200th has an equal (low) chance of being the final turn.
     LENGTH_OF_GAME = int(
         200 - 40 * np.log(1-random.random())
@@ -311,13 +311,13 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                         "name": nameA,
                         "avgScore": avgScoreA,
                         "stdev": stdevA,
-                        "history": list(int(x) for x in firstRoundHistory[0])
+                        "history": firstRoundHistory[0].tolist()
                     },
                     "playerB": {
                         "name": nameB,
                         "avgScore": avgScoreB,
                         "stdev": stdevB,
-                        "history": list(int(x) for x in firstRoundHistory[1])
+                        "history": firstRoundHistory[1].tolist()
                     }
                 }
             )
