@@ -80,7 +80,7 @@ def pad(stri, leng):
     for i in range(len(stri),leng):
         result = result+" "
     return result
-    
+
 def runFullPairingTournament(inFolder, outFile):
     print("Starting tournament, reading files from "+inFolder)
     scoreKeeper = {}
@@ -88,8 +88,9 @@ def runFullPairingTournament(inFolder, outFile):
     for file in os.listdir(inFolder):
         if file.endswith(".py"):
             STRATEGY_LIST.append(file[:-3])
-            
-            
+
+    random.shuffle(STRATEGY_LIST)
+
     for strategy in STRATEGY_LIST:
         scoreKeeper[strategy] = 0
         
