@@ -6,7 +6,7 @@ import numpy as np
 # First it starts detecting random and fixes itself when it realizes its joss
 # If the opponent isnt random, it just does AntiJoss
 
-# If opponent's first move is defect, sherlock goes full defect
+# If opponent's first 3 moves are defect, sherlock goes full defect
 
 
 # Config
@@ -77,8 +77,7 @@ def strategy(history, memory):
     # Enemy analyzis:
 
     
-    # Opponent's first move was defect, start defecting
-    ## NOTE: change to first 3
+    # Opponent's first 3 movse were defect, start defecting
     if history.shape[1] == 4 and np.count_nonzero(history[1, -3:] == 1) == 0 or IsntNice:
         IsntNice = True
         choice = 0
