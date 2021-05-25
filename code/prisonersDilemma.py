@@ -64,7 +64,7 @@ cacheparser.add_argument(
     "--cache-backend",
     dest="cache_backend",
     type=str,
-    default="json",
+    default="sqlite",
     help="Specifies which cache backend to use. (sqlite or json)"
 )
 
@@ -98,19 +98,19 @@ args = parser.parse_args()
 
 STRATEGY_FOLDERS = [
     "exampleStrats",
-    #"valadaptive",
-    #"nekiwo",
+    "valadaptive",
+    "nekiwo",
     "edward",
-    #"misc",
-    #"saffron",
-    #"aaaa-trsh",
-    #"phoenix",
-    #"l4vr0v",
-    #"smough",
-    #"dratini0",
-    #"decxjo",
-    #"Nobody5050",
-    #"sanscipher"
+    "misc",
+    "saffron",
+    "aaaa-trsh",
+    "phoenix",
+    "l4vr0v",
+    "smough",
+    "dratini0",
+    "decxjo",
+    "Nobody5050",
+    "sanscipher"
 ]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
