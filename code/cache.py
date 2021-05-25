@@ -68,6 +68,7 @@ class SQLiteCache(AbstractCache):
             "result text NOT NULL,"
             "timestamp number NOT NULL )"
         ))
+        self.cur.execute("CREATE INDEX IF NOT EXISTS idx_modules ON cache (moduleA, moduleB)")
 
         cache.commit()
 
