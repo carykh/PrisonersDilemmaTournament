@@ -96,24 +96,9 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-STRATEGY_FOLDERS = [
-    "exampleStrats",
-    "valadaptive",
-    "nekiwo",
-    "edward",
-    "misc",
-    "saffron",
-    "aaaa-trsh",
-    "phoenix",
-    "l4vr0v",
-    "smough",
-    "dratini0",
-    "decxjo",
-    "Nobody5050",
-    "sanscipher"
-]
-if args.use_slow:
-    STRATEGY_FOLDERS.append("slow")
+STRATEGY_FOLDERS = [p for p in os.listdir() if os.path.isdir(p)]
+if not args.use_slow:
+    STRATEGY_FOLDERS.remove("slow")
 RESULTS_FILE = "results.txt"
 RESULTS_HTML = "results.html"
 RESULTS_JSON = "results.json"
