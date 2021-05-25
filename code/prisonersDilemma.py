@@ -109,6 +109,7 @@ STRATEGY_FOLDERS = [
     "smough",
     "dratini0",
     "decxjo",
+    "Nobody5050"
 ]
 if args.use_slow:
     STRATEGY_FOLDERS.append("slow")
