@@ -96,28 +96,14 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-STRATEGY_FOLDERS = [
-    "exampleStrats",
-    "valadaptive",
-    "nekiwo",
-    "edward",
-    "misc",
-    "saffron",
-    "aaaa-trsh",
-    "phoenix",
-    "l4vr0v",
-    "smough",
-    "dratini0",
-    "decxjo",
-    "Nobody5050",
-    "sanscipher"
-]
-if args.use_slow:
-    STRATEGY_FOLDERS.append("slow")
+STRATEGY_FOLDERS = [p for p in os.listdir() if os.path.isdir(p)]
+if not args.use_slow:
+    STRATEGY_FOLDERS.remove("slow")
 RESULTS_FILE = "results.txt"
 RESULTS_HTML = "results.html"
 RESULTS_JSON = "results.json"
 SUMMARY_FILE = "summary.txt"
+PROFILE_FILE = "profile.txt"
 NUM_RUNS = args.num_runs
 
 pointsArray = [
@@ -205,7 +191,9 @@ def runRounds(pair):
         r = cache.get(pair)
         if r:
             cache.close()
-            return True, *r
+            return True, *r, 0
+    
+    startTime = time.time()
 
     allScoresA = []
     allScoresB = []
@@ -219,6 +207,8 @@ def runRounds(pair):
         allScoresB.append(scoresB)
     avgScoreA = statistics.mean(allScoresA)
     avgScoreB = statistics.mean(allScoresB)
+
+    endTime = time.time()
 
     # Standard deviation throws an error with <2 data points (run with -n1).
     # In that case, set it to 0 instead.
@@ -237,7 +227,7 @@ def runRounds(pair):
         cache.insert(pair, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr)
         cache.close()
 
-    return False, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr
+    return False, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr, endTime - startTime
 
 
 def pool_init(l):
@@ -286,6 +276,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
 
     numCombinations = len(combinations)
     allResults = []
+    strategyTimes = dict((k, 0) for k in STRATEGY_LIST)
     with Pool(args.processes, initializer=pool_init, initargs=(multiprocessing.Lock(),)) as p:
         hits = 0
         for i, result in enumerate(
@@ -299,6 +290,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                 stdevB,
                 firstRoundHistory,
                 roundResultsStr,
+                pairTime
             ) = result[0]
 
             if cached:
@@ -310,6 +302,9 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
             sys.stdout.flush()
             (nameA, nameB) = result[1]
             scoresList = [avgScoreA, avgScoreB]
+
+            strategyTimes[nameA] += pairTime
+            strategyTimes[nameB] += pairTime
 
             allResults.append(
                 {
@@ -349,8 +344,9 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
                 "rank": rank,
                 "score": score,
                 "avgScore": score / (len(STRATEGY_LIST) - 1),
+                "time": time
             }
-            for (name, rank, score) in zip(STRATEGY_LIST, invRankings, scoresNumpy)
+            for (name, rank, score, time) in zip(STRATEGY_LIST, invRankings, scoresNumpy, (strategyTimes[k] for k in STRATEGY_LIST))
         ]
         jsonResults = json.dumps({"results": allResults, "strategies": jsonStrategies})
         templateStr = t.read()
@@ -365,6 +361,11 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
         scoreLine = f"#{rank + 1}: {pad(STRATEGY_LIST[i] + ':', 16)}{score:.3f}  ({scorePer:.3f} average)\n"
         mainFile.write(scoreLine)
         summaryFile.write(scoreLine)
+    
+    with open(PROFILE_FILE, "w+") as profileFile:
+        strategyTimesSorted = sorted(strategyTimes.items(), key=lambda x: x[1], reverse=True)
+        for strategy, stratTime in strategyTimesSorted:
+            profileFile.write(f"{strategy}: {stratTime:.3f} sec\n")
 
     mainFile.flush()
     mainFile.close()
