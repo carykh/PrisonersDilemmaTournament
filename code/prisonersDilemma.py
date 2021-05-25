@@ -30,8 +30,10 @@ def getVisibleHistory(history, player, turn):
 
 def strategyMove(move):
     if type(move) is str:
-        defects = ["defect","tell truth"]
+        defects = ["defect","tell truth", "D"]
         return 0 if (move in defects) else 1
+    elif type(move) is bool:
+        return 1 if (move) else 0
     else:
         # Coerce all moves to be 0 or 1 so strategies can safely assume 0/1's only
         return int(bool(move))
