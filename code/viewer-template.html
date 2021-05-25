@@ -2,11 +2,15 @@
 <html>
     <head>
         <title>Prisoner's Dilemma Viewer</title>
-        <meta charset="utf-8">
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+        <meta charset="utf-8" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap"
+            rel="stylesheet"
+        />
         <style>
-            html, body {
+            html,
+            body {
                 width: 100%;
                 height: 100%;
                 font-family: sans-serif;
@@ -44,13 +48,13 @@
             }
 
             .scoreboard tr:nth-child(even) {
-                background-color: #191919
+                background-color: #191919;
             }
 
             .scoreboard td {
-                padding: 0.1em .7em;
+                padding: 0.1em 0.7em;
             }
-            
+
             .rank {
                 color: #8b888f;
             }
@@ -61,7 +65,7 @@
             }
 
             .results {
-                width:100%;
+                width: 100%;
                 text-align: left;
                 display: flex;
                 flex-direction: column;
@@ -91,12 +95,13 @@
                 border-collapse: collapse;
                 margin: 0 2em;
             }
-            
+
             .history th {
                 text-align: left;
             }
 
-            .round-score, .round-strategy {
+            .round-score,
+            .round-strategy {
                 white-space: nowrap;
             }
 
@@ -111,7 +116,8 @@
                 padding-right: 2em;
             }
 
-            .defect, .cooperate {
+            .defect,
+            .cooperate {
                 width: 1em;
                 height: 1em;
                 box-shadow: 0 0 1px #000000;
@@ -124,15 +130,18 @@
             .cooperate {
                 background-color: #213a2c;
             }
-
         </style>
     </head>
     <body>
         <div id="container"></div>
         <script type="module">
-            import { html, render, Component } from 'https://unpkg.com/htm/preact/standalone.module.js';
+            import {
+                html,
+                render,
+                Component,
+            } from 'https://unpkg.com/htm/preact/standalone.module.js';
 
-            const {results, strategies} = $results;
+            const { results, strategies } = $results;
 
             const storageVersion = localStorage.getItem('version');
             if (storageVersion !== '1') {
@@ -140,9 +149,13 @@
                 localStorage.setItem('version', '1');
             }
 
-            const enableViewStrategy = localStorage.getItem('enableViewStrategy') !== 'false';
+            const enableViewStrategy =
+                localStorage.getItem('enableViewStrategy') !== 'false';
             let viewedStrategy = localStorage.getItem('viewedStrategy');
-            if (!viewedStrategy || !strategies.some(strategy => strategy.name === viewedStrategy)) {
+            if (
+                !viewedStrategy ||
+                !strategies.some((strategy) => strategy.name === viewedStrategy)
+            ) {
                 let bestStrategy = null;
                 let bestStrategyScore = -Infinity;
                 for (const strategy of strategies) {
@@ -173,124 +186,251 @@
                     background-color: #0b2d22;
                 }
             `;
-            const enableAdvantageMap = localStorage.getItem('enableAdvantageMap') !== 'false';
-            if (enableAdvantageMap) { document.head.appendChild(advantageMapStyle); }
-            //const historyToTableCells = history => history.map(action => html`<td class="${action === 0 ? 'defect' : 'cooperate'} {}" />`)
-            const convertMoveToClass = { "11": "coop-tie", "00": "defect-tie", "01": "defect-win", "10": "coop-loose"  }
-            const historyToTableCells = (selfHistory, enemyHistory) => selfHistory.map((action, index) => html`<td class="${action === 0 ? 'defect' : 'cooperate'} ${convertMoveToClass[action.toString() + enemyHistory[index].toString()]}" />`)
-            const Result = ({playerA, playerB}) => html`
+            const enableAdvantageMap =
+                localStorage.getItem('enableAdvantageMap') !== 'false';
+            if (enableAdvantageMap) {
+                document.head.appendChild(advantageMapStyle);
+            }
+            // const historyToTableCells = history => history.map(action =>
+            //    html`<td class="${action === 0 ? 'defect' : 'cooperate'} {}" />`
+            // )
+
+            const convertMoveToClass = {
+                '00': 'defect-tie',
+                '01': 'defect-win',
+                10: 'coop-loose',
+                11: 'coop-tie',
+            };
+            const historyToTableCells = (selfHistory, enemyHistory) =>
+                selfHistory.map(
+                    (action, index) =>
+                        html`<td
+                            class="${action === 0
+                                ? 'defect'
+                                : 'cooperate'} ${convertMoveToClass[
+                                action.toString() +
+                                    enemyHistory[index].toString()
+                            ]}"
+                        />`
+                );
+            const Result = ({ playerA, playerB }) => html`
                 <div class="result">
                     <h4>${playerA.name} vs ${playerB.name}</h4>
                     <table class="history">
                         <tr>
                             <th class="round-strategy">${playerA.name}</th>
-                            <td class="round-score">${playerA.avgScore.toFixed(3)} ± ${playerA.stdev.toFixed(3)}</td>
-                            ${historyToTableCells(playerA.history, playerB.history)}
+                            <td class="round-score">
+                                ${playerA.avgScore.toFixed(3)} ±
+                                ${playerA.stdev.toFixed(3)}
+                            </td>
+                            ${historyToTableCells(
+                                playerA.history,
+                                playerB.history
+                            )}
                         </tr>
                         <tr>
                             <th class="round-strategy">${playerB.name}</th>
-                            <td class="round-score">${playerB.avgScore.toFixed(3)} ± ${playerB.stdev.toFixed(3)}</td>
-                            ${historyToTableCells(playerB.history, playerA.history)}
+                            <td class="round-score">
+                                ${playerB.avgScore.toFixed(3)} ±
+                                ${playerB.stdev.toFixed(3)}
+                            </td>
+                            ${historyToTableCells(
+                                playerB.history,
+                                playerA.history
+                            )}
                         </tr>
                     </table>
                 </div>
             `;
-            
+
             class ResultsView extends Component {
-                constructor (props) {
+                constructor(props) {
                     super(props);
 
                     this.state = {
                         enableViewStrategy,
                         viewedStrategy,
                         sortOrder,
-                        enableAdvantageMap
-                    }
+                        enableAdvantageMap,
+                    };
 
-                    this.onSetEnableViewStrategy = this.onSetEnableViewStrategy.bind(this);
-                    this.onSetEnableAdvantageMap = this.onSetEnableAdvantageMap.bind(this);
-                    this.onSetViewedStrategy = this.onSetViewedStrategy.bind(this);
-                    this.onSetSortOrderRunOrder = this.onSetSortOrder.bind(this, 'run-order');
-                    this.onSetSortOrderMyScore = this.onSetSortOrder.bind(this, 'my-score');
-                    this.onSetSortOrderOpponentScore = this.onSetSortOrder.bind(this, 'opponent-score');
+                    this.onSetEnableViewStrategy = this.onSetEnableViewStrategy.bind(
+                        this
+                    );
+                    this.onSetEnableAdvantageMap = this.onSetEnableAdvantageMap.bind(
+                        this
+                    );
+                    this.onSetViewedStrategy = this.onSetViewedStrategy.bind(
+                        this
+                    );
+                    this.onSetSortOrderRunOrder = this.onSetSortOrder.bind(
+                        this,
+                        'run-order'
+                    );
+                    this.onSetSortOrderMyScore = this.onSetSortOrder.bind(
+                        this,
+                        'my-score'
+                    );
+                    this.onSetSortOrderOpponentScore = this.onSetSortOrder.bind(
+                        this,
+                        'opponent-score'
+                    );
                 }
 
-                onSetEnableViewStrategy (event) {
-                    this.setState({enableViewStrategy: event.target.checked});
-                    localStorage.setItem('enableViewStrategy', JSON.stringify(event.target.checked));
+                onSetEnableViewStrategy(event) {
+                    this.setState({ enableViewStrategy: event.target.checked });
+                    localStorage.setItem(
+                        'enableViewStrategy',
+                        JSON.stringify(event.target.checked)
+                    );
                 }
 
-                onSetViewedStrategy (event) {
-                    this.setState({viewedStrategy: event.target.value});
+                onSetViewedStrategy(event) {
+                    this.setState({ viewedStrategy: event.target.value });
                     localStorage.setItem('viewedStrategy', event.target.value);
                 }
 
-                onSetSortOrder (sortOrder) {
-                    this.setState({sortOrder});
+                onSetSortOrder(sortOrder) {
+                    this.setState({ sortOrder });
                     localStorage.setItem('sortOrder', sortOrder);
                 }
 
                 onSetEnableAdvantageMap(event) {
-                    if (event.target.checked) { document.head.appendChild(advantageMapStyle); }
-                    else if (document.head.contains(advantageMapStyle)) {
+                    if (event.target.checked) {
+                        document.head.appendChild(advantageMapStyle);
+                    } else if (document.head.contains(advantageMapStyle)) {
                         document.head.removeChild(advantageMapStyle);
                     }
-                    localStorage.setItem('enableAdvantageMap', JSON.stringify(event.target.checked));
+                    localStorage.setItem(
+                        'enableAdvantageMap',
+                        JSON.stringify(event.target.checked)
+                    );
                 }
 
-                render () {
-                    const viewedStrategyExists = this.state.enableViewStrategy && strategies.some(strategy => strategy.name === this.state.viewedStrategy);
-                    const filteredResults = viewedStrategyExists ?
-                        results
-                            .filter(result => 
-                                result.playerA.name === this.state.viewedStrategy ||
-                                result.playerB.name === this.state.viewedStrategy
-                            ).sort((first, second) => {
-                                if (this.state.sortOrder === 'run-order') return 0;
-                                const firstScore = (((first.playerA.name === this.state.viewedStrategy) ^ (this.state.sortOrder === 'opponent-score')) ? first.playerA.avgScore : first.playerB.avgScore);
-                                const secondScore = (((second.playerA.name === this.state.viewedStrategy) ^ (this.state.sortOrder === 'opponent-score')) ? second.playerA.avgScore : second.playerB.avgScore);
-                                return secondScore - firstScore;
-                            }) :
-                        results;
+                render() {
+                    const viewedStrategyExists =
+                        this.state.enableViewStrategy &&
+                        strategies.some(
+                            (strategy) =>
+                                strategy.name === this.state.viewedStrategy
+                        );
+                    const filteredResults = viewedStrategyExists
+                        ? results
+                              .filter(
+                                  (result) =>
+                                      result.playerA.name ===
+                                          this.state.viewedStrategy ||
+                                      result.playerB.name ===
+                                          this.state.viewedStrategy
+                              )
+                              .sort((first, second) => {
+                                  if (this.state.sortOrder === 'run-order')
+                                      return 0;
+                                  const firstScore =
+                                      (first.playerA.name ===
+                                          this.state.viewedStrategy) ^
+                                      (this.state.sortOrder ===
+                                          'opponent-score')
+                                          ? first.playerA.avgScore
+                                          : first.playerB.avgScore;
+                                  const secondScore =
+                                      (second.playerA.name ===
+                                          this.state.viewedStrategy) ^
+                                      (this.state.sortOrder ===
+                                          'opponent-score')
+                                          ? second.playerA.avgScore
+                                          : second.playerB.avgScore;
+                                  return secondScore - firstScore;
+                              })
+                        : results;
                     return html`
-                            <div class="results">
-                                <div class="controls">
-                                    <label><input type="checkbox" checked=${this.state.enableViewStrategy} onChange=${this.onSetEnableViewStrategy} /> FILTER: </label>
-                                    <select disabled=${!this.state.enableViewStrategy} onInput=${this.onSetViewedStrategy} value=${this.state.viewedStrategy}>
-                                        ${strategies.map(strategy => html`<option value=${strategy.name}>${strategy.name}</option>`)}
-                                    </select>
-                                    <span> SORT BY: </span>
-                                    <label><input
+                        <div class="results">
+                            <div class="controls">
+                                <label
+                                    ><input
+                                        type="checkbox"
+                                        checked=${this.state.enableViewStrategy}
+                                        onChange=${this.onSetEnableViewStrategy}
+                                    />
+                                    FILTER:
+                                </label>
+                                <select
+                                    disabled=${!this.state.enableViewStrategy}
+                                    onInput=${this.onSetViewedStrategy}
+                                    value=${this.state.viewedStrategy}
+                                >
+                                    ${strategies
+                                        .sort((a, b) => a.name > b.name ? 1 : -1)
+                                        .map((strategy) =>
+                                            html`<option value=${strategy.name}>
+                                                ${strategy.name}
+                                            </option>`
+                                    )}
+                                </select>
+                                <span> SORT BY: </span>
+                                <label
+                                    ><input
                                         type="radio"
                                         value="run-order"
-                                        checked=${this.state.sortOrder === 'run-order'}
+                                        checked=${this.state.sortOrder ===
+                                        'run-order'}
                                         onInput=${this.onSetSortOrderRunOrder}
-                                        disabled=${!this.state.enableViewStrategy}
-                                    />Run order </label>
-                                    <label><input
+                                        disabled=${!this.state
+                                            .enableViewStrategy}
+                                    />Run order
+                                </label>
+                                <label
+                                    ><input
                                         type="radio"
                                         value="my-score"
-                                        checked=${this.state.sortOrder === 'my-score'}
+                                        checked=${this.state.sortOrder ===
+                                        'my-score'}
                                         onInput=${this.onSetSortOrderMyScore}
-                                        disabled=${!this.state.enableViewStrategy}
-                                    />My score </label>
-                                    <label><input
+                                        disabled=${!this.state
+                                            .enableViewStrategy}
+                                    />My score
+                                </label>
+                                <label
+                                    ><input
                                         type="radio"
                                         value="opponent-score"
-                                        checked=${this.state.sortOrder === 'opponent-score'}
-                                        onInput=${this.onSetSortOrderOpponentScore}
-                                        disabled=${!this.state.enableViewStrategy}
-                                    />Opponent score </label>
-                                    <label><input type="checkbox" checked=${this.state.enableAdvantageMap} onChange=${this.onSetEnableAdvantageMap} /> Highlight Cheat/Losses</label>
-                                </div>
-                                <div class="results-container">
-                                    ${filteredResults.map(result => html`<${Result}
-                                        playerA=${viewedStrategyExists && this.state.viewedStrategy === result.playerB.name ? result.playerB : result.playerA}
-                                        playerB=${viewedStrategyExists && this.state.viewedStrategy === result.playerB.name ? result.playerA : result.playerB}
-                                        key=${result.playerA.name + '_' + result.playerB.name}
-                                    />`)}
-                                </div>
+                                        checked=${this.state.sortOrder ===
+                                        'opponent-score'}
+                                        onInput=${this
+                                            .onSetSortOrderOpponentScore}
+                                        disabled=${!this.state
+                                            .enableViewStrategy}
+                                    />Opponent score
+                                </label>
+                                <label
+                                    ><input
+                                        type="checkbox"
+                                        checked=${this.state.enableAdvantageMap}
+                                        onChange=${this.onSetEnableAdvantageMap}
+                                    />
+                                    Highlight Cheat/Losses</label
+                                >
                             </div>
+                            <div class="results-container">
+                                ${filteredResults.map(
+                                    (result) => html`<${Result}
+                                        playerA=${viewedStrategyExists &&
+                                        this.state.viewedStrategy ===
+                                            result.playerB.name
+                                            ? result.playerB
+                                            : result.playerA}
+                                        playerB=${viewedStrategyExists &&
+                                        this.state.viewedStrategy ===
+                                            result.playerB.name
+                                            ? result.playerA
+                                            : result.playerB}
+                                        key=${result.playerA.name +
+                                        '_' +
+                                        result.playerB.name}
+                                    />`
+                                )}
+                            </div>
+                        </div>
                     `;
                 }
             }
@@ -307,20 +447,34 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${strategies.slice(0).sort((a, b) => a.rank - b.rank).map(strategy => html`
-                                <tr>
-                                    <td class="rank">${strategy.rank + 1}</td>
-                                    <td>${strategy.name}</td>
-                                    <td>${strategy.score.toFixed(3)}</td>
-                                    <td class="avg-score">${strategy.avgScore.toFixed(3)}</td>
-                                </tr>
-                            `)}
+                            ${strategies
+                                .slice(0)
+                                .sort((a, b) => a.rank - b.rank)
+                                .map(
+                                    (strategy) => html`
+                                        <tr>
+                                            <td class="rank">
+                                                ${strategy.rank + 1}
+                                            </td>
+                                            <td>${strategy.name}</td>
+                                            <td>
+                                                ${strategy.score.toFixed(3)}
+                                            </td>
+                                            <td class="avg-score">
+                                                ${strategy.avgScore.toFixed(3)}
+                                            </td>
+                                        </tr>
+                                    `
+                                )}
                         </tbody>
                     </table>
                 </div>
-            `
+            `;
 
-            render(html`<${Scoreboard} /><${ResultsView} />`, document.getElementById('container'));
+            render(
+                html`<${Scoreboard} /><${ResultsView} />`,
+                document.getElementById('container')
+            );
         </script>
     </body>
 </html>
