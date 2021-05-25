@@ -108,7 +108,6 @@ STRATEGY_FOLDERS = [
     "l4vr0v",
     "smough",
     "dratini0",
-    "Taro1z",
     "decxjo",
     "Nobody5050",
     "sanscipher"
