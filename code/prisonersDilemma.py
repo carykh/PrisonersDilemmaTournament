@@ -39,6 +39,8 @@ def strategyMove(move):
 def runRound(pair):
     moduleA = importlib.import_module(STRATEGY_FOLDER+"."+pair[0])
     moduleB = importlib.import_module(STRATEGY_FOLDER+"."+pair[1])
+    importlib.reload(moduleA)
+    importlib.reload(moduleB)
     memoryA = None
     memoryB = None
     
