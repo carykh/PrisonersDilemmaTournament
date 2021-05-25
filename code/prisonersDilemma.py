@@ -151,6 +151,7 @@ def runRound(pair):
     historyFlipped = np.zeros((2,LENGTH_OF_GAME),dtype=int)
 
     for turn in range(LENGTH_OF_GAME):
+        # Copy history so that players cannot rewrite it
         playerAmove, memoryA = moduleA.strategy(history[:,:turn].copy(),memoryA)
         playerBmove, memoryB = moduleB.strategy(historyFlipped[:,:turn].copy(),memoryB)
         history[0, turn] = strategyMove(playerAmove)
@@ -164,13 +165,13 @@ def runRound(pair):
 def tallyRoundScores(history):
     scoreA = 0
     scoreB = 0
-    ROUND_LENGTH = history.shape[1]
-    for turn in range(ROUND_LENGTH):
+    roundLength = history.shape[1]
+    for turn in range(roundLength):
         playerAmove = history[0, turn]
         playerBmove = history[1, turn]
         scoreA += pointsArray[playerAmove][playerBmove]
         scoreB += pointsArray[playerBmove][playerAmove]
-    return scoreA / ROUND_LENGTH, scoreB / ROUND_LENGTH
+    return scoreA / roundLength, scoreB / roundLength
 
 
 def outputRoundResults(f, pair, roundHistory, scoresA, scoresB, stdevA, stdevB):
@@ -198,6 +199,7 @@ def progressBar(width, completion):
 
 
 def runRounds(pair):
+    # If round results are cached, return the cached results instead
     if args.cache:
         cache = cachelib.get_backend(args, lock=lock)
         r = cache.get(pair)
@@ -205,7 +207,6 @@ def runRounds(pair):
             cache.close()
             return True, *r
 
-    roundResults = StringIO()
     allScoresA = []
     allScoresB = []
     firstRoundHistory = None
@@ -218,8 +219,13 @@ def runRounds(pair):
         allScoresB.append(scoresB)
     avgScoreA = statistics.mean(allScoresA)
     avgScoreB = statistics.mean(allScoresB)
+
+    # Standard deviation throws an error with <2 data points (run with -n1).
+    # In that case, set it to 0 instead.
     stdevA = statistics.stdev(allScoresA) if len(allScoresA) > 1 else 0
     stdevB = statistics.stdev(allScoresB) if len(allScoresB) > 1 else 0
+
+    roundResults = StringIO()
     outputRoundResults(
         roundResults, pair, firstRoundHistory, scoresA, scoresB, stdevA, stdevB
     )
@@ -240,7 +246,7 @@ def pool_init(l):
 
 
 def runFullPairingTournament(inFolders, outFile, summaryFile):
-    st = time.time()
+    startTime = time.time()
     print("Starting tournament, reading files from " + ", ".join(inFolders))
     if args.delete_cache:
         try:
@@ -364,7 +370,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
     mainFile.close()
     summaryFile.flush()
     summaryFile.close()
-    print(f"Done with everything! ({time.time() - st}) Results file written to {RESULTS_FILE}")
+    print(f"Done with everything! ({time.time() - startTime}) Results file written to {RESULTS_FILE}")
 
 
 if __name__ == "__main__":
