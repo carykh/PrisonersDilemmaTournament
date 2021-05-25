@@ -5,6 +5,7 @@ import sqlite3
 import pathlib
 import os
 import sys
+import hashlib
 
 import numpy
 
@@ -35,10 +36,13 @@ class AbstractCache:
 
     def insert(self, pair, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr):
         raise NotImplementedError
+    
+    def pair_paths(self, pair):
+        return (pathlib.Path(file_location_from_spec(pair[0])).absolute(),
+                pathlib.Path(file_location_from_spec(pair[1])).absolute())
 
     def get_last_modified(self, pair):
-        afile = pathlib.Path(file_location_from_spec(pair[0])).absolute()
-        bfile = pathlib.Path(file_location_from_spec(pair[1])).absolute()
+        afile, bfile = self.pair_paths(pair)
         sfile = pathlib.Path(sys.argv[0]).absolute()
         almod = os.path.getmtime(afile)
         blmod = os.path.getmtime(bfile)
@@ -46,6 +50,15 @@ class AbstractCache:
         mod = max(almod, blmod, slmod)
         return mod
 
+def hash_file(filePath):
+    sha256 = hashlib.sha256()
+    with open(filePath, "rb") as file:
+        while True:
+            data = file.read(65536)
+            if not data:
+                break
+            sha256.update(data)
+    return sha256.digest()
 
 class SQLiteCache(AbstractCache):
     default = "cache"
@@ -61,12 +74,19 @@ class SQLiteCache(AbstractCache):
         self.cur.execute("PRAGMA read_uncommitted=1")
         self.cur.execute("PRAGMA journal_mode=wal")
         self.cur.execute("PRAGMA wal_autocheckpoint=0")
+
+        if self.cur.execute("PRAGMA user_version").fetchone()[0] != 1:
+            self.cur.execute("DROP TABLE IF EXISTS cache")
+            self.cur.execute("PRAGMA user_version=1")
+
         self.cur.execute((
             "CREATE TABLE IF NOT EXISTS cache ("
             "moduleA text NOT NULL,"
             "moduleB text NOT NULL,"
             "result text NOT NULL,"
-            "timestamp number NOT NULL )"
+            "timestamp number NOT NULL,"
+            "hashA blob NOT NULL,"
+            "hashB blob NOT NULL )"
         ))
         self.cur.execute("CREATE INDEX IF NOT EXISTS idx_modules ON cache (moduleA, moduleB)")
 
@@ -75,6 +95,15 @@ class SQLiteCache(AbstractCache):
     def shutdown(self):
         self.cur.execute("PRAGMA wal_checkpoint(FULL)")
         self.close()
+    
+    def _load(self, res):
+        unpacked = pickle.loads(base64.b64decode(res[0]))
+        return (unpacked.get("avgScoreA"),
+                unpacked.get("avgScoreB"),
+                unpacked.get("stdevA"),
+                unpacked.get("stdevB"),
+                numpy.array(unpacked.get("firstRoundHistory")),
+                unpacked.get("roundResultsStr"),)  # This is a tuple.
 
     def get(self, pair):
         mod = self.get_last_modified(pair)
@@ -84,15 +113,16 @@ class SQLiteCache(AbstractCache):
         res = cur.execute(f"SELECT result FROM cache WHERE timestamp >= ? AND moduleA = ? AND moduleB = ?",
                           (mod, pair[0], pair[1])).fetchone()
         if res:
-            unpacked = pickle.loads(base64.b64decode(res[0]))
-            return (unpacked.get("avgScoreA"),
-                    unpacked.get("avgScoreB"),
-                    unpacked.get("stdevA"),
-                    unpacked.get("stdevB"),
-                    numpy.array(unpacked.get("firstRoundHistory")),
-                    unpacked.get("roundResultsStr"),)  # This is a tuple.
+            return self._load(res)
         else:
-            return False
+            pathA, pathB = self.pair_paths(pair)
+
+            hashA = hash_file(pathA)
+            hashB = hash_file(pathB)
+
+            res = cur.execute(f"SELECT result FROM cache WHERE hashA = ? AND hashB = ? AND moduleA = ? AND moduleB = ?",
+                                (hashA, hashB, pair[0], pair[1])).fetchone()
+            return self._load(res) if res else False
 
     def insert(self, pair, avgScoreA, avgScoreB, stdevA, stdevB, firstRoundHistory, roundResultsStr):
         mod = self.get_last_modified(pair)
@@ -106,8 +136,13 @@ class SQLiteCache(AbstractCache):
             "roundResultsStr": roundResultsStr
         }
         rstr = base64.b64encode(pickle.dumps(renc))
-        self.cur.execute("INSERT INTO cache (moduleA, moduleB, result, timestamp)"
-                         "VALUES(?, ?, ?, ?)", (pair[0], pair[1], rstr, mod))
+
+        pathA, pathB = self.pair_paths(pair)
+
+        hashA = hash_file(pathA)
+        hashB = hash_file(pathB)
+        self.cur.execute("INSERT INTO cache (moduleA, moduleB, result, timestamp, hashA, hashB)"
+                         "VALUES(?, ?, ?, ?, ?, ?)", (pair[0], pair[1], rstr, mod, hashA, hashB))
 
     def close(self):
         self.cur.close()
