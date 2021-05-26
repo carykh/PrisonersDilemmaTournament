@@ -48,7 +48,7 @@ def strategy(history, memory):
 	opponents_recent_defections = np.count_nonzero(defections == 1) # count the number of defections
 	
 	if memory == None:
-		if num_rounds == 5 or memory == "undecided":
+		if num_rounds == 5:
 			# Time to choose something.
 			opponent_moves = history[1]
 			opponent_stats = dict(zip(*np.unique(opponent_moves, return_counts=True)))
@@ -56,15 +56,15 @@ def strategy(history, memory):
 				# Random Detected
 				choice = "defect"
 				memory = "alwaysDefect"
-			elif opponent_stats.get(0, 0) < 1:  
+			elif history[1, -1] == 1 and history[1, -2] == 1:
 				# they never defected, take advantage of them
 				choice = "defect"
-				memory = "alwaysDefect"
-			elif opponent_stats.get(0, 0) == 5:  
+				memory = "defect_assuming_cooperative"
+			elif history[1, -1] == 0 and history[1, -2] == 0:
 				# they always defect
 				choice = "defect"
 				memory = "alwaysDefect"
-			elif opponent_moves[2] == 1 and opponent_moves[3] == 0:  
+			elif history[1, -1] == 1 and history[1, -2] == 0:  
 				# ftft detected
 				choice = "cooperate"
 				memory = "alternate"
@@ -91,14 +91,16 @@ def strategy(history, memory):
 			our_last_move = history[0, -1] if num_rounds > 0 else 1
 			choice = 0 if our_last_move else 1
 		elif memory == "alwaysDefect":
-			if history[1, -1] == "0":
-				choice = "cooperate"
-				memory = "undecided"
 			#always defect
 			choice = "defect"
+		elif memory == "defect_assuming_cooperative":
+			# always defect unless they defect
+			if opponents_recent_moves[1] == 0:
+				choice = "cooperate"
+				memory = "tft"
+			else:
+				choice = "defect"
 		else:
-			print("choice: " + choice)
-			print("memory: " + memory)
-			choice = "cooperate"
+			print("unreachable state lol")
 			
 	return choice, memory
