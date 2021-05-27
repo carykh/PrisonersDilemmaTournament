@@ -72,9 +72,9 @@ def strategy(history, memory):
                 deadlock = 0
 
         else:
+            # Adjusting those values improved random detection by 0.003 - 0.010 points on average
+            # Makes it easier to find actual random from Joss-likes
             if history[1, -1] == history[1, -2] == 1:
-                # Adjusting those values improved random detection by 0.003 - 0.010 points on average
-                # Makes it easier to find actual random from Joss-likes
                 randomness -= 1.25
 
             if history[1, -1] != history[1, -2]:
@@ -82,6 +82,9 @@ def strategy(history, memory):
 
             if history[0, -1] != history[1, -1]:
                 randomness += 1.25
+
+            if history[1, -1] == history[1, -2] == 0:
+                randomness -= 0.25
 
             # Checks if patterns are similar to Joss-likes
             # Random has a chance of doing this accidentally so I'm not giving it a lot of points
