@@ -106,6 +106,5 @@ def strategy(history, memory):
 			choice = "cooperate"
 		else:
 			choice = "cooperate"
-	
-	print(memory)		
+		
 	return choice, memory
