@@ -77,14 +77,16 @@ def strategy(history, memory):
             if history[1, -1] == history[1, -2] == 1:
                 randomness -= 1.25
 
+            elif history[1, -1] == history[1, -2] == 0:
+                randomness -= 0.25
+
             if history[1, -1] != history[1, -2]:
                 randomness += 1
 
             if history[0, -1] != history[1, -1]:
                 randomness += 1.25
 
-            if history[1, -1] == history[1, -2] == 0:
-                randomness -= 0.25
+
 
             # Checks if patterns are similar to Joss-likes
             # Random has a chance of doing this accidentally so I'm not giving it a lot of points
