@@ -25,11 +25,15 @@ def DetectJoss(history, window):
     return False
 
 
-def tft(history):
+def PeriodicJoss(history):
+
     choice = 1
 
     if history.shape[1] > 0 and history[1, -1] == 0:
         choice = 0
+
+        if history.shape[1] % 20 < 2 and history[1].sum() != 0:
+            choice = 1
 
     return choice
             
@@ -50,8 +54,8 @@ def strategy(history, memory):
         randomness = memory[0]
         deadlock = memory[1]
 
-    # I tried many, many alternative but regular TFT works the best anyway
-    choice = tft(history)
+    # This TFT alternative works much better than with regular TFT
+    choice = PeriodicJoss(history)
 
     # One of the improvemnts which checks in case the first move was defect
     # Random has a 50% chance of doing it, this is very big red flag
