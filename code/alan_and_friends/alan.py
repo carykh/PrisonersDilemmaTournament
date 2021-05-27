@@ -49,11 +49,6 @@ def wait_for_defect(response):
         return 'dcc', recover_phase_a
     return 'c', wait_for_defect
 
-def wait_for_coop(response):
-    if response == 'c':
-        return 'ccc', recover_phase_a
-    return 'd', wait_for_coop
-
 def strategy(history, memory):
     if memory is None:
         state, schedule, count = wait_for_defect, list('c'), 0
