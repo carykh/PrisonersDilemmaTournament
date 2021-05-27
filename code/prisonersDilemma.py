@@ -1,11 +1,15 @@
-import os
+import os, sys
 import itertools
 import importlib
 import numpy as np
 import random
+from multiprocessing import Queue, Process, freeze_support
 
 STRATEGY_FOLDER = "exampleStrats"
 RESULTS_FILE = "results.txt"
+
+# Assumes multithreaded CPU, as such divides by 2, set to zero to prevent spawning of child processes (for debugging and in case of issues in Windows)
+PARALLEL_WORKERS = os.cpu_count()//2
 
 pointsArray = [[1,5],[0,3]] # The i-j-th element of this array is how many points you receive if you do play i, and your opponent does play j.
 moveLabels = ["D","C"]
@@ -39,6 +43,8 @@ def strategyMove(move):
 def runRound(pair):
     moduleA = importlib.import_module(STRATEGY_FOLDER+"."+pair[0])
     moduleB = importlib.import_module(STRATEGY_FOLDER+"."+pair[1])
+    importlib.reload(moduleA)
+    importlib.reload(moduleB)
     memoryA = None
     memoryB = None
     
@@ -52,6 +58,11 @@ def runRound(pair):
         history[1,turn] = strategyMove(playerBmove)
         
     return history
+
+def runRoundWorker(input_queue, output_queue):
+    for pair in iter(input_queue.get, 'STOP'):
+        result = runRound(pair)
+        output_queue.put( (pair, result) )
     
 def tallyRoundScores(history):
     scoreA = 0
@@ -89,17 +100,50 @@ def runFullPairingTournament(inFolder, outFile):
         if file.endswith(".py"):
             STRATEGY_LIST.append(file[:-3])
             
-            
     for strategy in STRATEGY_LIST:
         scoreKeeper[strategy] = 0
         
     f = open(outFile,"w+")
-    for pair in itertools.combinations(STRATEGY_LIST, r=2):
-        roundHistory = runRound(pair)
+    pairs = list(itertools.combinations(STRATEGY_LIST, r=2))
+
+    work_queue = Queue()
+    done_queue = Queue()
+    
+    # If we are not using workers then use
+    if PARALLEL_WORKERS > 0:
+        print("Queueing work...")
+        for pair in pairs:
+            work_queue.put(pair)
+
+        print("Starting {} workers...".format(PARALLEL_WORKERS))
+        for i in range(PARALLEL_WORKERS):
+            Process(target=runRoundWorker, args=(work_queue, done_queue)).start()    
+    
+        # Adds stop flags to the work queue
+        for i in range(PARALLEL_WORKERS):
+            # since the workers stop when receive a stop flag, we don't wait for them, just for the work results...
+            work_queue.put('STOP')
+
+    n_pairs = len(pairs)
+    n_round = 0
+    for i in range(len(pairs)):
+        n_round += 1
+        sys.stdout.write("\rRound {} of {}".format(n_round, n_pairs))
+
+        if PARALLEL_WORKERS == 0:
+            # Iterative code
+            pair = pairs[i]
+            roundHistory = runRound(pair)
+        else:
+            # Parallel code, wait for the workers results
+            pair, roundHistory = done_queue.get()    
+
         scoresA, scoresB = tallyRoundScores(roundHistory)
         outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
         scoreKeeper[pair[0]] += scoresA
         scoreKeeper[pair[1]] += scoresB
+
+    sys.stdout.write("\rRounds done: {}           \n".format(n_round))
         
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):
@@ -117,5 +161,6 @@ def runFullPairingTournament(inFolder, outFile):
     f.close()
     print("Done with everything! Results file written to "+RESULTS_FILE)
     
-    
-runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
+if __name__ == "__main__":
+    freeze_support()
+    runFullPairingTournament(STRATEGY_FOLDER, RESULTS_FILE)
