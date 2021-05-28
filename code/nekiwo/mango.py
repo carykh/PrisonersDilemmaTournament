@@ -7,7 +7,7 @@ import numpy as np
 # My shamelessly stolen version of OTFT
 # from https://arxiv.org/ftp/cs/papers/0609/0609017.pdf
 
-# Includes small improvements
+# Includes a lot of small improvements
 # (It's really hard to improve this strat without ruining it)
 
 def DetectJoss(history, window):
@@ -46,6 +46,15 @@ def NicePeriodicJoss(history):
 
         if history.shape[1] % 20 < 2 and history[1].sum() != 0:
             choice = 1
+
+    return choice
+
+
+def tft(history):
+    choice = 1
+
+    if history.shape[1] > 0 and history[1, -1] == 0:
+        choice = 0
 
     return choice
             
@@ -121,6 +130,10 @@ def strategy(history, memory):
                     deadlock += 1
                 else:
                     deadlock = 0
+
+                # First 10 rounds are TFT to prevent triggering detectives
+                if history.shape[1] < 10:
+                    choice = tft(history)
 
 
             
