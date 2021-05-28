@@ -25,8 +25,20 @@ def DetectJoss(history, window):
     return False
 
 
-def PeriodicJoss(history):
+def TFTCheck(history):
+    MyMoves = history[0, -4:]
+    EnemyMoves = history[1, -4:]
+    
+    if history.shape[1] > 4 and \
+       np.array_equal(EnemyMoves, [0, 1, 0, 0]) and \
+       np.array_equal(MyMoves, [0, 0, 1, 0]):
 
+        return False
+    
+    return True
+
+
+def NicePeriodicJoss(history):
     choice = 1
 
     if history.shape[1] > 0 and history[1, -1] == 0:
@@ -55,12 +67,12 @@ def strategy(history, memory):
         deadlock = memory[1]
 
     # This TFT alternative works much better than with regular TFT
-    choice = PeriodicJoss(history)
+    choice = NicePeriodicJoss(history)
 
     # One of the improvemnts which checks in case the first move was defect
     # Random has a 50% chance of doing it, this is very big red flag
     if history.shape[1] == 1 and history[1, -1] == 0:
-        randomness += 2
+        randomness += 4
 
     if history.shape[1] > 1:
         if deadlock >= DeadlockThreshold:
@@ -86,16 +98,23 @@ def strategy(history, memory):
             if history[0, -1] != history[1, -1]:
                 randomness += 1.25
 
+            if history[1, -1] != history[0, -2]:
+                randomness += 0.75
 
+            # Checks for certain pattern that a TFT will never do
+            # Rare occurence, but a big sign of random
+            if not TFTCheck(history):
+                randomness += 2
 
             # Checks if patterns are similar to Joss-likes
-            # Random has a chance of doing this accidentally so I'm not giving it a lot of points
+            # Random has a chance of doing this accidentally so I'm not taking away a lot of points
             if history.shape[1] > 8 and DetectJoss(history, 8):
                 randomness -= 0.25
 
 
             if randomness >= RandomThreshold:
                 choice = 0
+
             else:
 
                 if history[1, -1] != history[1, -2]:
