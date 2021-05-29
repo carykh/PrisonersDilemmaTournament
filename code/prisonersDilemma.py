@@ -26,6 +26,15 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "-d",
+    "--det-turns",
+    dest="deterministic_turns",
+    type=int,
+    default=500,
+    help="Number of turns in a deterministic run",
+)
+
+parser.add_argument(
     "--skip-slow",
     dest="use_slow",
     action="store_false",
@@ -96,6 +105,11 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+DETERMINISTIC_TURNS = args.deterministic_turns
+
+if DETERMINISTIC_TURNS < 200:
+    raise Exception("--det-turns must be at least 200")
+
 STRATEGY_FOLDERS = [p for p in os.listdir() if os.path.isdir(p)]
 if not args.use_slow:
     STRATEGY_FOLDERS.remove("slow")
@@ -122,9 +136,7 @@ def strategyMove(move):
         return move
 
 
-def runRound(pair):
-    moduleA = importlib.import_module(pair[0])
-    moduleB = importlib.import_module(pair[1])
+def runRound(moduleA, moduleB):
     memoryA = None
     memoryB = None
 
@@ -146,6 +158,66 @@ def runRound(pair):
         historyFlipped[1,turn] = history[0,turn]
 
     return history
+
+turnChances = []
+
+def turnChance(x,summing=False):
+    if x == 0:
+        return 1/40
+    if summing:
+        S = turnChance(x-1,True)
+        return (1-S)/40+S
+    return (1-turnChance(x-1,True))/40
+
+for i in range(DETERMINISTIC_TURNS-199):
+    turnChances.append(turnChance(i))
+
+# this is so that deterministic algorithms still get 3 points for always Coop,
+# instead of 2.999
+chancesSum = sum(turnChances)
+turnChances = [i/chancesSum for i in turnChances]
+
+def runDeterministic(moduleA, moduleB):
+    memoryA = None
+    memoryB = None
+    memoryA2 = None
+    memoryB2 = None
+
+    history = np.zeros((2,DETERMINISTIC_TURNS),dtype=int)
+    historyFlipped = np.zeros((2,DETERMINISTIC_TURNS),dtype=int)
+
+    for turn in range(DETERMINISTIC_TURNS):
+        playerAmove, memoryA = moduleA.strategy(history[:,:turn].copy(),memoryA)
+        playerBmove, memoryB = moduleB.strategy(historyFlipped[:,:turn].copy(),memoryB)
+        history[0, turn] = strategyMove(playerAmove)
+        history[1, turn] = strategyMove(playerBmove)
+
+        playerAmove2, memoryA2 = moduleA.strategy(history[:,:turn].copy(),memoryA2)
+        playerBmove2, memoryB2 = moduleB.strategy(historyFlipped[:,:turn].copy(),memoryB2)
+
+        if strategyMove(playerAmove2) != strategyMove(playerAmove):
+            return False
+        if strategyMove(playerBmove2) != strategyMove(playerBmove):
+            return False
+
+        historyFlipped[0,turn] = history[1,turn]
+        historyFlipped[1,turn] = history[0,turn]
+
+    totals = [0,0]
+    scores = [0,0]
+
+    for turn in range(199):
+        scores[0] += pointsArray[history[0,turn]][history[1,turn]]
+        scores[1] += pointsArray[history[1,turn]][history[0,turn]]
+
+    for turn in range(199,DETERMINISTIC_TURNS):
+        scores[0] += pointsArray[history[0,turn]][history[1,turn]]
+        scores[1] += pointsArray[history[1,turn]][history[0,turn]]
+
+        totals[0] += scores[0]/(turn+1)*turnChances[turn-199]
+        totals[1] += scores[1]/(turn+1)*turnChances[turn-199]
+
+    return totals, history
 
 
 def tallyRoundScores(history):
@@ -192,19 +264,31 @@ def runRounds(pair):
         if r:
             cache.close()
             return True, *r, 0
-    
+
     startTime = time.time()
 
     allScoresA = []
     allScoresB = []
     firstRoundHistory = None
-    for i in range(NUM_RUNS):
-        roundHistory = runRound(pair)
-        scoresA, scoresB = tallyRoundScores(roundHistory)
-        if i == 0:
-            firstRoundHistory = roundHistory
-        allScoresA.append(scoresA)
-        allScoresB.append(scoresB)
+
+    moduleA = importlib.import_module(pair[0])
+    moduleB = importlib.import_module(pair[1])
+
+    deterministic = runDeterministic(moduleA, moduleB)
+
+    if deterministic:
+        allScoresA = [deterministic[0][0]]
+        allScoresB = [deterministic[0][1]]
+        firstRoundHistory = deterministic[1]
+    else:
+        for i in range(NUM_RUNS):
+            roundHistory = runRound(moduleA, moduleB)
+            scoresA, scoresB = tallyRoundScores(roundHistory)
+            if i == 0:
+                firstRoundHistory = roundHistory
+            allScoresA.append(scoresA)
+            allScoresB.append(scoresB)
+
     avgScoreA = statistics.mean(allScoresA)
     avgScoreB = statistics.mean(allScoresB)
 
@@ -217,7 +301,7 @@ def runRounds(pair):
 
     roundResults = StringIO()
     outputRoundResults(
-        roundResults, pair, firstRoundHistory, scoresA, scoresB, stdevA, stdevB
+        roundResults, pair, firstRoundHistory, avgScoreA, avgScoreB, stdevA, stdevB
     )
     roundResults.flush()
     roundResultsStr = roundResults.getvalue()
@@ -361,7 +445,7 @@ def runFullPairingTournament(inFolders, outFile, summaryFile):
         scoreLine = f"#{rank + 1}: {pad(STRATEGY_LIST[i] + ':', 16)}{score:.3f}  ({scorePer:.3f} average)\n"
         mainFile.write(scoreLine)
         summaryFile.write(scoreLine)
-    
+
     with open(PROFILE_FILE, "w+") as profileFile:
         strategyTimesSorted = sorted(strategyTimes.items(), key=lambda x: x[1], reverse=True)
         for strategy, stratTime in strategyTimesSorted:
