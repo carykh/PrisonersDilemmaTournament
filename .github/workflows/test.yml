@@ -8,7 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       summary: ${{ steps.summary.outputs.file }}
-      #results: ${{ steps.results.outputs.file }}
     defaults:
       run:
         working-directory: ./code
@@ -24,13 +23,6 @@ jobs:
       - id: summary
         run: |
             output="$(cat summary.txt)"
-            output="${output//'%'/'%25'}"
-            output="${output//$'\n'/'%0A'}"
-            output="${output//$'\r'/'%0D'}"
-            echo "::set-output name=file::$output"
-      - id: results
-        run: |
-            output="$(cat results.html)"
             output="${output//'%'/'%25'}"
             output="${output//$'\n'/'%0A'}"
             output="${output//$'\r'/'%0D'}"
