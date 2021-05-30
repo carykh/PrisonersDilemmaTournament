@@ -3,20 +3,23 @@ import numpy as np
 
 DEADLOCK = 3
 RANDOM = 7
-ABUSEVAL = 2
+ABUSEVAL = 1
 
 states = {
     "11,10,00,": 0,
-    "10,00,01,10,01,":1,
-    "11,11,01,10,01,10,":1,
-    "11,10,00,00,10,10,":0,
+    "10,01,10,": 1,
+    "10,01,10,11,11,": 0,
+    "10,00,01,10,01,": 1,
+    "11,11,01,10,01,10,": 1,
+    "11,10,00,00,10,10,": 0,
 
-    "01,01,01,01,01,01,":0,
-    "01,01,01,01,00,01,":0,
-    "01,01,01,00,01,01,":0,
-    "01,01,00,01,01,01,":0,
-    "01,00,01,01,01,01,":0,
-    "00,01,01,01,01,01,":0,
+    "01,01,01,01,01,01,": 0,
+    "01,01,01,01,01,00,": 0,
+    "01,01,01,01,00,01,": 0,
+    "01,01,01,00,01,01,": 0,
+    "01,01,00,01,01,01,": 0,
+    "01,00,01,01,01,01,": 0,
+    "00,01,01,01,01,01,": 0,
 }
 
 def getScore(history,start,end):
@@ -120,9 +123,24 @@ def strategy(history, memory):
         if turns >= x:
             state = str(history[0,-x])+str(history[1,-x])+',' + state;
 
+    #dumb winodwed special case
+    if turns > 31:
+        if np.array_equal(history[1,0:31],[1,1,1,1,1, 1,1,1,1,1, 0,0,0,0,0,0, 1,1,1,1,1,1, 0,0,0, 1,0,0,1,1,0]):
+            if turns % 3 == 0:
+                return 0, [dead,rand,abuse,abused,abusePeriod,jossness,forgave]
+            return 1, [dead,rand,abuse,abused,abusePeriod,jossness,forgave]
+
     if state in states:
         #print('\n'+str(history)+'\n'+state+'\n')
         return states[state], [dead,rand,abuse,abused,abusePeriod,jossness,forgave]
+
+    #forgive alternating lock
+    if forgave < 2 and state == "01,10,01,10,01,10,":
+        return 1, [dead,rand,abuse,abused,abusePeriod,jossness,forgave+1]
+
+    if forgave < 2 and state == "11,10,00,00,00,00,":
+        dead = deadlock
+        return 1, [dead,rand,abuse,abused,abusePeriod,jossness,forgave+1]
 
     #alternating detection
     if turns > 9:
@@ -235,13 +253,22 @@ def strategy(history, memory):
 
     #abuse detection
     if abuse == 0 and turns > 2 and turns < 100:
+        if np.array_equal(history[1,-6:-1],[1,1,1,1,1]) and np.array_equal(history[0,-6:-1], [1,1,0,1,1]):
+            abuse = ABUSEVAL
         if np.array_equal(history[1,-5:-1],[1,0,1,1]) and np.array_equal(history[0,-5:-1], [1,1,0,1]):
             abuse = ABUSEVAL
+        if np.array_equal(history[1,-6:-1],[1,0,0,1,1]) and np.array_equal(history[0,-6:-1], [1,1,0,0,1]):
+            abuse = ABUSEVAL
+        if np.array_equal(history[1,-8:-1],[1,0,0,1,0,1,1]) and np.array_equal(history[0,-8:-1], [1,1,0,0,1,0,1]):
+            abuse = ABUSEVAL
 
-    if abused > 1 and getScore(history,2,turns)/(turns-2.75) < 3:
+    if turns > 10 and abused > 1 and getScore(history,2,turns)/(turns-3.75) < 3:
         abuse = -1
-    elif abused > 4 and getScore(history,2,turns)/(turns-2) < 3:
+    elif abused > 4 and getScore(history,2,turns)/(turns-3) < 3:
         abuse = -1
+
+    if np.array_equal(history[0,-8:-1],[0,1,0,0,1,0,1]) and np.array_equal(history[1,-8:-1], [1,0,1,1,1,1,1]):
+        abuse = 1
 
     #abuse
     if abuse > 0:
