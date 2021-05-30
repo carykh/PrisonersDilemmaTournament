@@ -267,9 +267,6 @@ def strategy(history, memory):
     elif abused > 4 and getScore(history,2,turns)/(turns-3) < 3:
         abuse = -1
 
-    if np.array_equal(history[0,-8:-1],[0,1,0,0,1,0,1]) and np.array_equal(history[1,-8:-1], [1,0,1,1,1,1,1]):
-        abuse = 1
-
     #abuse
     if abuse > 0:
         abuseable = True
