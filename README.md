@@ -1,6 +1,7 @@
 # PrisonersDilemmaTournament Community Fork
 
 This is a fork of PrisonersDilemmaTournament including improved runner and more strategies for better testing.
+A leaderboard of the strategies in the repo is available [here](https://prisoners-dilemma-enjoyers.github.io/PrisonersDilemmaTournament)
 
 `code/prisonersDilemma.py` has a variety of parameters that can be tweaked. Run it with the `--help` argument to list all of them.
 
